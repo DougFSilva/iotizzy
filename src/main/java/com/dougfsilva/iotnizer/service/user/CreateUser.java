@@ -1,11 +1,11 @@
 package com.dougfsilva.iotnizer.service.user;
 
-import com.dougfsilva.iotnizer.model.EmailValidator;
+import com.dougfsilva.iotnizer.exception.InvalidEmailException;
+import com.dougfsilva.iotnizer.model.Email;
 import com.dougfsilva.iotnizer.model.Profile;
 import com.dougfsilva.iotnizer.model.ProfileType;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.repository.UserRepository;
-import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +20,10 @@ public class CreateUser {
         this.repository = repository;
     }
     public String create(String email, String name, String password, ProfileType profileType){
-        User user = new User(null, email, name, password, List.of(new Profile(profileType)), UUID.randomUUID().toString(), false);
+        if(repository.findByEmail(new Email(email)).isPresent()){
+            throw new InvalidEmailException("Email already registered in the database!");
+        }
+        User user = new User(null, new Email(email), name, password, List.of(new Profile(profileType)), UUID.randomUUID().toString(), false);
         return repository.create(user);
     }
 

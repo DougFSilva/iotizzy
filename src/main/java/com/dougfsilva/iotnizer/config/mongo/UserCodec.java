@@ -1,6 +1,6 @@
 package com.dougfsilva.iotnizer.config.mongo;
 
-import com.dougfsilva.iotnizer.model.EmailValidator;
+import com.dougfsilva.iotnizer.model.Email;
 import com.dougfsilva.iotnizer.model.Profile;
 import com.dougfsilva.iotnizer.model.ProfileType;
 import com.dougfsilva.iotnizer.model.User;
@@ -30,7 +30,7 @@ public class UserCodec implements Codec<User> {
                 .toList();
         Document document = new Document();
         document.append("_id", new ObjectId())
-                .append("email", user.getEmail())
+                .append("email", user.getEmail().getAddress())
                 .append("name", user.getName())
                 .append("password", user.getPassword())
                 .append("clientMqttPassword", user.getClientMqttPassword())
@@ -54,7 +54,7 @@ public class UserCodec implements Codec<User> {
                 .map(profileDocument -> new Profile(ProfileType.toEnum(profileDocument.getString("type"))))
                 .toList();
         return new User(document.getObjectId("_id").toHexString(),
-                document.getString("email"),
+                new Email(document.getString("email")),
                 document.getString("name"),
                 document.getString("password"),
                 mongoProfiles,

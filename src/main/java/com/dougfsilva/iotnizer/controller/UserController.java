@@ -1,8 +1,10 @@
 package com.dougfsilva.iotnizer.controller;
 
 import com.dougfsilva.iotnizer.dto.UserForm;
+import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.service.user.CreateUser;
 import com.dougfsilva.iotnizer.service.user.DeleteUser;
+import com.dougfsilva.iotnizer.service.user.FindUser;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +17,13 @@ import java.net.URI;
 public class UserController {
 
     private final CreateUser createUser;
-
     private final DeleteUser deleteUser;
+    private final FindUser findUser;
 
-    public UserController(CreateUser createUser, DeleteUser deleteUser) {
+    public UserController(CreateUser createUser, DeleteUser deleteUser, FindUser findUser) {
         this.createUser = createUser;
         this.deleteUser = deleteUser;
+        this.findUser = findUser;
     }
 
     @PostMapping
@@ -34,5 +37,11 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@RequestParam("id") String id){
         deleteUser.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<User> findUser(@RequestParam("id") String id){
+        User user = findUser.findById(id);
+        return ResponseEntity.ok().body(user);
     }
 }
