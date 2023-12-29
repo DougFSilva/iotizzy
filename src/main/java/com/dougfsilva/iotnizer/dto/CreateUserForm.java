@@ -4,7 +4,7 @@ import com.dougfsilva.iotnizer.model.ProfileType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record UserForm(
+public record CreateUserForm(
 
         @NotBlank String email,
         @NotBlank String name,

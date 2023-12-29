@@ -1,18 +1,25 @@
 package com.dougfsilva.iotnizer.repository;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.springframework.stereotype.Repository;
+
 import com.dougfsilva.iotnizer.config.mongo.MongoConnection;
 import com.dougfsilva.iotnizer.config.mongo.UserCodec;
 import com.dougfsilva.iotnizer.model.Email;
 import com.dougfsilva.iotnizer.model.User;
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
+import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.InsertOneResult;
-import org.bson.types.ObjectId;
-import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @Repository
 public class UserRepository {
@@ -33,6 +40,20 @@ public class UserRepository {
         getCollection().deleteOne(Filters.eq(new ObjectId(user.getId())));
         connection.close();
     }
+    
+	public User update(User user) {
+		List<Document> profilesDocuments = user.getProfiles().stream()
+				.map(profile -> new Document("type", profile.getProfileType().getDescription()).append("authority",
+						"profile.getAuthority()"))
+				.collect(Collectors.toList());
+		User updatedUser = (getCollection().findOneAndUpdate(Filters.eq(new ObjectId(user.getId())),
+				Updates.combine(Updates.set("email", user.getEmail().getAddress()),
+						Updates.set("name", user.getName()), Updates.set("password", user.getPassword()),
+						Updates.set("profiles", profilesDocuments)),
+				new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)));
+		connection.close();
+		return updatedUser;
+	}
 
     public Optional<User> findById(String id) {
         Optional<User> user = Optional
@@ -47,8 +68,16 @@ public class UserRepository {
         connection.close();
         return user;
     }
+    
+    public List<User> findAll() {
+		List<User> users = new ArrayList<>();
+		MongoCursor<User> mongoCursor = getCollection().find().batchSize(10000).iterator();
+		mongoCursor.forEachRemaining(cursor -> users.add(cursor));
+		connection.close();
+		return users;
+	}
 
-    private MongoCollection getCollection() {
+    private MongoCollection<User> getCollection() {
         return connection.connect(new UserCodec(), "user", User.class);
     }
 

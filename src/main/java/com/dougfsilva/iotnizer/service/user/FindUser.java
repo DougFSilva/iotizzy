@@ -1,11 +1,14 @@
 package com.dougfsilva.iotnizer.service.user;
 
-import com.dougfsilva.iotnizer.exception.ObjectNotFoundException;
-import com.dougfsilva.iotnizer.model.User;
-import com.dougfsilva.iotnizer.repository.UserRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import com.dougfsilva.iotnizer.exception.ObjectNotFoundException;
+import com.dougfsilva.iotnizer.model.Email;
+import com.dougfsilva.iotnizer.model.User;
+import com.dougfsilva.iotnizer.repository.UserRepository;
 
 @Service
 public class FindUser {
@@ -17,7 +20,12 @@ public class FindUser {
 
     public User findById(String id){
         Optional<User> user = repository.findById(id);
-        return user.orElseThrow(() -> new ObjectNotFoundException(String.format("User with id $s not found in database!", id)));
+        return user.orElseThrow(() -> new ObjectNotFoundException(String.format("User with id %s not found in database!", id)));
+    }
+    
+    public List<User> findAll(){
+    	List<User> users = repository.findAll();
+    	return users;
     }
 
 }
