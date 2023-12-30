@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ControlDeviceType {
 
-	ANALOG(1, "ANALOG CONTROL DEVICE"), DISCRETE(2, "DISCRETE CONTROL DEVICE");
+	ANALOG(1, "ANALOG"), DISCRETE(2, "DISCRETE");
 
     private long cod;
     private String description;

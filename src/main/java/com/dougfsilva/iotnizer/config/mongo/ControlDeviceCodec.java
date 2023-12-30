@@ -40,7 +40,7 @@ public class ControlDeviceCodec implements Codec<ControlDevice> {
     public ControlDevice decode(BsonReader reader, DecoderContext decoderContext) {
         Document document = codec.decode(reader, decoderContext);
         return new ControlDevice(document.getObjectId("_id").toHexString(),
-        		document.getObjectId("user_id").toHexString(),
+        		document.getString("user_id"),
                 ControlDeviceType.toEnum(document.getString("deviceType")),
                 document.getString("tag"),
                 document.getString("location"));
