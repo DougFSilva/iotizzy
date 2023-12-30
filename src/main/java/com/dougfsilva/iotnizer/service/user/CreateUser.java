@@ -24,14 +24,15 @@ public class CreateUser {
         this.repository = repository;
         this.createClientMqtt = createClientMqtt;
     }
-    public String create(String email, String name, String password, ProfileType profileType){
+    public User create(String email, String name, String password, ProfileType profileType){
         if(repository.findByEmail(new Email(email)).isPresent()){
             throw new InvalidEmailException("Email already registered in the database!");
         }
         User user = new User(null, new Email(email), name, password, List.of(new Profile(profileType)), UUID.randomUUID().toString(), false);
         String createdUser_id = repository.create(user);
+        user.setId(createdUser_id);
         createClientMqtt.create(user);
-        return createdUser_id;
+        return user;
     }
 
 }

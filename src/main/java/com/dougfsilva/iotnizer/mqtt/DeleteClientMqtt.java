@@ -8,20 +8,22 @@ import com.dougfsilva.iotnizer.model.User;
 
 @Service
 public class DeleteClientMqtt {
-	
-private final MqttConnectionParam mqtt;
-	
-	public DeleteClientMqtt(MqttConnectionParam mqtt) {
+
+	private final MqttParams mqtt;
+
+	public DeleteClientMqtt(MqttParams mqtt) {
 		this.mqtt = mqtt;
 	}
 
-
 	public void delete(User user) {
+		String username = mqtt.getDefaultClientUsername(user);
+		String rolename = mqtt.getDefaultRolename(user.getId());
 		try {
-			Runtime.getRuntime().exec(mqtt.getDynSecUriCommand() + String.format("deleteClient %s", user.getEmail().getAddress()));
+			Runtime.getRuntime().exec(mqtt.getDynSecUriCommand() + String.format("deleteClient %s", username));
+			Runtime.getRuntime().exec(mqtt.getDynSecUriCommand() + String.format("deleteRole %s", rolename));
 		} catch (IOException e) {
-		    e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
-	
+
 }

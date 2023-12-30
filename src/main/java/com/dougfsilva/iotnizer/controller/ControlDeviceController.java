@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.dougfsilva.iotnizer.dto.CreateControlDeviceForm;
+import com.dougfsilva.iotnizer.model.ControlDevice;
 import com.dougfsilva.iotnizer.service.controlDevice.CreateControlDevice;
 import com.dougfsilva.iotnizer.service.controlDevice.DeleteControlDevice;
 import com.dougfsilva.iotnizer.service.controlDevice.FindControlDevice;
@@ -36,8 +37,8 @@ public class ControlDeviceController {
 
 	@PostMapping
 	public ResponseEntity<String> createDevice(@RequestBody CreateControlDeviceForm form){
-		String device_id = createDevice.create(form.user_id(), form.deviceType(), form.tag(), form.location());
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(device_id).toUri();
+		ControlDevice device = createDevice.create(form.user_id(), form.deviceType(), form.tag(), form.location());
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(device.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 	

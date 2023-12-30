@@ -11,21 +11,25 @@ import com.dougfsilva.iotnizer.model.User;
 @Service
 public class CreateClientMqtt {
 
-	private final MqttConnectionParam mqtt;
+	private final MqttParams mqtt;
 	
-	public CreateClientMqtt(MqttConnectionParam mqtt) {
+	public CreateClientMqtt(MqttParams mqtt) {
 		this.mqtt = mqtt;
 	}
 
 	public void create(User user) {
+		String username = mqtt.getDefaultClientUsername(user);
+		String rolename = mqtt.getDefaultRolename(user.getId());
 		try {
-			Process exec = Runtime.getRuntime().exec(mqtt.getDynSecUriCommand() + String.format("createClient %s", user.getEmail().getAddress()));
-			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(exec.getOutputStream()));
+			Process createClient = Runtime.getRuntime().exec(mqtt.getDynSecUriCommand() + String.format("createClient %s", username));
+			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(createClient.getOutputStream()));
 			out.write(user.getClientMqttPassword() + "\n");
 			out.flush();
 			out.write(user.getClientMqttPassword() + "\n");
 			out.flush();
 			out.close();
+			Runtime.getRuntime().exec(mqtt.getDynSecUriCommand() + String.format("createRole %s", rolename));
+			Runtime.getRuntime().exec(mqtt.getDynSecUriCommand() + String.format("addClientRole %s %s", username, rolename));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

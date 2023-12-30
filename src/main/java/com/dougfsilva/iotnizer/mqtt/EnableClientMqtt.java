@@ -9,9 +9,9 @@ import com.dougfsilva.iotnizer.model.User;
 @Service
 public class EnableClientMqtt {
 
-	private final MqttConnectionParam mqtt;
+	private final MqttParams mqtt;
 	
-	public EnableClientMqtt(MqttConnectionParam mqtt) {
+	public EnableClientMqtt(MqttParams mqtt) {
 		this.mqtt = mqtt;
 	}
 
