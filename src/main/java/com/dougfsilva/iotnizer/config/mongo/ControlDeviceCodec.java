@@ -25,7 +25,7 @@ public class ControlDeviceCodec implements Codec<ControlDevice> {
         document.append("_id", new ObjectId())
                 .append("user_id", device.getUser_id())
                 .append("deviceType", device.getDeviceType())
-                .append("name", device.getName())
+                .append("tag", device.getTag())
                 .append("location", device.getLocation());
         codec.encode(writer, document, encoderContext);
 
@@ -42,7 +42,7 @@ public class ControlDeviceCodec implements Codec<ControlDevice> {
         return new ControlDevice(document.getObjectId("_id").toHexString(),
         		document.getObjectId("user_id").toHexString(),
                 ControlDeviceType.toEnum(document.getString("deviceType")),
-                document.getString("name"),
+                document.getString("tag"),
                 document.getString("location"));
     }
 

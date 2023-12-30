@@ -19,7 +19,7 @@ public class ControlDevice {
 	
 	private ControlDeviceType deviceType;
 	
-	private String name;
+	private String tag;
 	
 	private String location;
 	
