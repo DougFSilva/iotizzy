@@ -17,6 +17,8 @@ public class ControlDevice {
 	
 	private String user_id;
 	
+	private ControlDeviceType deviceType;
+	
 	private String name;
 	
 	private String location;
