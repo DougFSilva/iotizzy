@@ -34,10 +34,8 @@ public class UpdateUser {
 	        }
 			user.setEmail(newEmail);
 		}
-		if(name != null) {
-			if(!name.isBlank()) {
-				user.setName(name);
-			}
+		if(name != null && !name.isBlank()) {
+			user.setName(name);
 		}
 		if(profileType != null) {
 			List<Profile> profiles = new ArrayList<>();
