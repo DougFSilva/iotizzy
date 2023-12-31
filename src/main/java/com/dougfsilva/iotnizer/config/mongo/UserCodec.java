@@ -26,7 +26,7 @@ public class UserCodec implements Codec<User> {
         List<Document> profilesDocuments = user.getProfiles()
                 .stream()
                 .map(profile -> new Document("type", profile.getProfileType().getDescription()).append("authority",
-                        "profile.getAuthority()"))
+                        profile.getAuthority()))
                 .toList();
         Document document = new Document();
         document.append("_id", new ObjectId())

@@ -44,7 +44,7 @@ public class UserRepository {
 	public User update(User user) {
 		List<Document> profilesDocuments = user.getProfiles().stream()
 				.map(profile -> new Document("type", profile.getProfileType().getDescription()).append("authority",
-						"profile.getAuthority()"))
+						profile.getAuthority()))
 				.collect(Collectors.toList());
 		User updatedUser = (getCollection().findOneAndUpdate(Filters.eq(new ObjectId(user.getId())),
 				Updates.combine(Updates.set("email", user.getEmail().getAddress()),

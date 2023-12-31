@@ -3,6 +3,7 @@ package com.dougfsilva.iotnizer.service.user;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.dougfsilva.iotnizer.exception.InvalidEmailException;
@@ -19,16 +20,20 @@ public class CreateUser {
     private final UserRepository repository;
     
     private final CreateClientMqtt createClientMqtt;
+    
+    private final PasswordEncoder passwordEncoder;
 
-    public CreateUser(UserRepository repository, CreateClientMqtt createClientMqtt) {
+    public CreateUser(UserRepository repository, CreateClientMqtt createClientMqtt, PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.createClientMqtt = createClientMqtt;
+        this.passwordEncoder = passwordEncoder;
     }
     public User create(String email, String name, String password, ProfileType profileType){
         if(repository.findByEmail(new Email(email)).isPresent()){
             throw new InvalidEmailException("Email already registered in the database!");
         }
-        User user = new User(null, new Email(email), name, password, List.of(new Profile(profileType)), UUID.randomUUID().toString(), false);
+        String passwordEncoded = passwordEncoder.encode(password);
+        User user = new User(null, new Email(email), name, passwordEncoded, List.of(new Profile(profileType)), UUID.randomUUID().toString(), false);
         String createdUser_id = repository.create(user);
         user.setId(createdUser_id);
         createClientMqtt.create(user);
