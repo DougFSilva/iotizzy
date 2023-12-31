@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.dougfsilva.iotnizer.config.security.AuthenticationService;
 import com.dougfsilva.iotnizer.dto.CreateControlDeviceForm;
 import com.dougfsilva.iotnizer.dto.UpdateControlDeviceForm;
 import com.dougfsilva.iotnizer.model.ControlDevice;
@@ -36,25 +37,28 @@ public class ControlDeviceController {
 	private final UpdateControlDevice updateControleDevice;
 
 	private final FindControlDevice findControlDevice;
+	
+	private final AuthenticationService authenticationService;
 
 	public ControlDeviceController(CreateControlDevice createDevice, DeleteControlDevice deleteControlDevice,
-			UpdateControlDevice updateControleDevice, FindControlDevice findControlDevice) {
+			UpdateControlDevice updateControleDevice, FindControlDevice findControlDevice, AuthenticationService authenticationService) {
 		this.createDevice = createDevice;
 		this.deleteControlDevice = deleteControlDevice;
 		this.findControlDevice = findControlDevice;
 		this.updateControleDevice = updateControleDevice;
+		this.authenticationService = authenticationService;
 	}
 
 	@PostMapping
 	public ResponseEntity<String> createDevice(@RequestBody @Valid CreateControlDeviceForm form) {
-		ControlDevice device = createDevice.create(form.user_id(), form.deviceType(), form.tag(), form.location());
+		ControlDevice device = createDevice.create(authenticationService.getAuthenticatedUser(), form.deviceType(), form.tag(), form.location());
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(device.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 
 	@DeleteMapping
 	public ResponseEntity<Void> deleteDevice(@RequestParam("id") String id) {
-		deleteControlDevice.delete(id);
+		deleteControlDevice.delete(authenticationService.getAuthenticatedUser(), id);
 		return ResponseEntity.noContent().build();
 	}
 
@@ -81,4 +85,5 @@ public class ControlDeviceController {
 		List<ControlDevice> devices = findControlDevice.findAll();
 		return ResponseEntity.ok().body(devices);
 	}
+	
 }

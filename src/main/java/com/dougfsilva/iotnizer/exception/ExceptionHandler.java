@@ -20,4 +20,11 @@ public class ExceptionHandler {
                 exception.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
+    
+    @org.springframework.web.bind.annotation.ExceptionHandler(OperationNotPermittedException.class)
+    public ResponseEntity<StandardError> operationNotPermittedException(OperationNotPermittedException exception) {
+        StandardError error = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
+                exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
 }

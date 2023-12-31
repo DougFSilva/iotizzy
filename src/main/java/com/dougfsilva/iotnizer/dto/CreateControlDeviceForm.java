@@ -7,8 +7,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record CreateControlDeviceForm(
 		
-		@NotBlank String user_id,
-		
 		@NotNull ControlDeviceType deviceType,
 		
 		@NotBlank String tag,
