@@ -13,19 +13,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.dougfsilva.iotnizer.repository.UserRepository;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-	private TokenService tokenService;
+	private final AuthenticationFilter authenticationFilter;
 
-	private UserRepository userRepository;
-
-    SecurityConfiguration(TokenService tokenService, UserRepository userRepository) {
-    	this.tokenService = tokenService;
-    	this.userRepository = userRepository;
+    SecurityConfiguration(AuthenticationFilter authenticationFilter) {
+    	this.authenticationFilter = authenticationFilter;
     }
 
 	@Bean
@@ -44,7 +39,7 @@ public class SecurityConfiguration {
 				.anyRequest().authenticated())
 		.cors(cors -> cors.disable())
 		.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-		.addFilterBefore(new AuthenticationFilter(tokenService, userRepository), UsernamePasswordAuthenticationFilter.class);
+		.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
     }
 	

@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.springframework.stereotype.Service;
 
-import com.dougfsilva.iotnizer.model.ControlDevice;
+import com.dougfsilva.iotnizer.model.User;
 
 @Service
 public class TopicManagerMqtt {
@@ -15,9 +15,8 @@ public class TopicManagerMqtt {
 		this.mqtt = mqtt;
 	}
 	
-	public void addTopic(ControlDevice device) {
-		String rolename = mqtt.getDefaultRolename(device.getUser_id());
-		String topic = mqtt.getDefaultTopicName(device);
+	public void addTopic(User user, String topic) {
+		String rolename = mqtt.getDefaultRolename(user.getId());
 		try {
 			Runtime.getRuntime().exec(mqtt.getDynSecUriCommand() + String.format("addRoleACL %s publishClientSend %s allow", rolename, topic));
 			Runtime.getRuntime().exec(mqtt.getDynSecUriCommand() + String.format("addRoleACL %s subscribeLiteral %s allow", rolename, topic));
@@ -27,9 +26,8 @@ public class TopicManagerMqtt {
 		}
 	}
 	
-	public void removeTopic(ControlDevice device) {
-		String rolename = mqtt.getDefaultRolename(device.getUser_id());
-		String topic = mqtt.getDefaultTopicName(device);
+	public void removeTopic(User user, String topic) {
+		String rolename = mqtt.getDefaultRolename(user.getId());
 		try {
 			Runtime.getRuntime().exec(mqtt.getDynSecUriCommand() + String.format("removeRoleACL %s publishClientSend %s", rolename, topic));
 			Runtime.getRuntime().exec(mqtt.getDynSecUriCommand() + String.format("removeRoleACL %s subscribeLiteral %s", rolename, topic));

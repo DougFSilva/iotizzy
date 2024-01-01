@@ -23,4 +23,6 @@ public class ControlDevice {
 	
 	private String location;
 	
+	private String mqttTopic;
+	
 }

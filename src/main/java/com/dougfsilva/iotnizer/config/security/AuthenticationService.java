@@ -2,7 +2,6 @@ package com.dougfsilva.iotnizer.config.security;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,8 +15,11 @@ import com.dougfsilva.iotnizer.repository.UserRepository;
 @Service
 public class AuthenticationService implements UserDetailsService {
 
-	@Autowired
-	private UserRepository repository;
+	private final UserRepository repository;
+
+	public AuthenticationService(UserRepository repository) {
+		this.repository = repository;
+	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

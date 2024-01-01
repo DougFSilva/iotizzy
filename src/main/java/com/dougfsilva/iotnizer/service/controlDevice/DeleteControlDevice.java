@@ -28,7 +28,7 @@ public class DeleteControlDevice {
 		if(!user.getId().equals(device.getUser_id())) {
 			throw new OperationNotPermittedException("Deleting devices belonging to another user is not allowed!");
 		}
+		topicManagerMqtt.removeTopic(user, device.getMqttTopic());
 		repository.delete(device);
-		topicManagerMqtt.removeTopic(device);
 	}
 }

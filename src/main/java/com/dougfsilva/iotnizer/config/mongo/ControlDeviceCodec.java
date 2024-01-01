@@ -26,7 +26,8 @@ public class ControlDeviceCodec implements Codec<ControlDevice> {
                 .append("user_id", device.getUser_id())
                 .append("deviceType", device.getDeviceType())
                 .append("tag", device.getTag())
-                .append("location", device.getLocation());
+                .append("location", device.getLocation())
+                .append("mqttTopic", device.getMqttTopic());
         codec.encode(writer, document, encoderContext);
 
     }
@@ -43,7 +44,8 @@ public class ControlDeviceCodec implements Codec<ControlDevice> {
         		document.getString("user_id"),
                 ControlDeviceType.toEnum(document.getString("deviceType")),
                 document.getString("tag"),
-                document.getString("location"));
+                document.getString("location"),
+                document.getString("mqttTopic"));
     }
 
 }
