@@ -25,8 +25,8 @@ public class CreateMeasuringDevice {
 		mqttTopicService.addTopic(user, topic);
 		MeasuringDevice device = new MeasuringDevice(null, user.getId(), tag, location, topic);
 		String device_id = repository.create(device);
-		repository.createCollection(String.format("md_%s", device_id));
 		device.setId(device_id);
+		repository.createCollection(MeasuringDeviceCollectionNameGenerator.generate(device));
 		return device;
 	}
 	
