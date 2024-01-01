@@ -6,6 +6,7 @@ import com.dougfsilva.iotnizer.model.MeasuringDevice;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.mqtt.MqttTopicService;
 import com.dougfsilva.iotnizer.repository.MeasurindDeviceRepository;
+import com.dougfsilva.iotnizer.service.AuthenticatedUserService;
 
 @Service
 public class CreateMeasuringDevice {
@@ -13,13 +14,17 @@ public class CreateMeasuringDevice {
 	private final MeasurindDeviceRepository repository;
 	
 	private final MqttTopicService  mqttTopicService;
+	
+	private final AuthenticatedUserService authenticatedUserService;
 
-	public CreateMeasuringDevice(MeasurindDeviceRepository repository, MqttTopicService mqttTopicService) {
+	public CreateMeasuringDevice(MeasurindDeviceRepository repository, MqttTopicService mqttTopicService, AuthenticatedUserService authenticatedUserService) {
 		this.repository = repository;
 		this.mqttTopicService = mqttTopicService;
+		this.authenticatedUserService = authenticatedUserService;
 	}
 	
-	public MeasuringDevice create(User user, String tag, String location) {
+	public MeasuringDevice create(String tag, String location) {
+		User user = authenticatedUserService.getUser();
 		String formatedTag = tag.toUpperCase().replaceAll(" ", "_").replaceAll("/", "-").replaceAll("#", "H").replaceAll("\\+", "M");
 		String topic = String.format("iotnizer/persist/%s/%s",user.getId(), formatedTag);
 		mqttTopicService.addTopic(user, topic);

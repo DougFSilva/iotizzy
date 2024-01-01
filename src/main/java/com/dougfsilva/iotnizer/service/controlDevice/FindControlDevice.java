@@ -9,27 +9,31 @@ import com.dougfsilva.iotnizer.exception.ObjectNotFoundException;
 import com.dougfsilva.iotnizer.model.ControlDevice;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.repository.ControlDeviceRepository;
-import com.dougfsilva.iotnizer.service.user.FindUser;
+import com.dougfsilva.iotnizer.service.AuthenticatedUserService;
 
 @Service
 public class FindControlDevice {
 
 	private final ControlDeviceRepository repository;
 	
-	private final FindUser findUser;
+	private final AuthenticatedUserService authenticatedUserService;
 
-	public FindControlDevice(ControlDeviceRepository repository, FindUser findUser) {
+	public FindControlDevice(ControlDeviceRepository repository, AuthenticatedUserService authenticatedUserService) {
 		this.repository = repository;
-		this.findUser = findUser;
+		this.authenticatedUserService = authenticatedUserService;
 	}
 	
 	public ControlDevice findById(String id) {
 		Optional<ControlDevice> device = repository.findById(id);
-		return device.orElseThrow(() -> new ObjectNotFoundException(String.format("Control device with id %s not found in database!", id)));
+		if(device.isEmpty()) {
+			throw new ObjectNotFoundException(String.format("Control device with id %s not found in database!", id));
+		}
+		authenticatedUserService.deviceVerify(device.get());
+		return device.get();
 	}
 	
-	public List<ControlDevice> findAllByUser(String user_id){
-		User user = findUser.findById(user_id);
+	public List<ControlDevice> findAllByUser(){
+		User user = authenticatedUserService.getUser();
 		return repository.findAllByUser(user);
 	}
 	

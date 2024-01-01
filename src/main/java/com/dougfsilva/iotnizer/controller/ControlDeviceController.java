@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,27 +37,24 @@ public class ControlDeviceController {
 
 	private final FindControlDevice findControlDevice;
 	
-	private final AuthenticationService authenticationService;
-
 	public ControlDeviceController(CreateControlDevice createControlDevice, DeleteControlDevice deleteControlDevice,
 			UpdateControlDevice updateControleDevice, FindControlDevice findControlDevice, AuthenticationService authenticationService) {
 		this.createControlDevice = createControlDevice;
 		this.deleteControlDevice = deleteControlDevice;
 		this.findControlDevice = findControlDevice;
 		this.updateControleDevice = updateControleDevice;
-		this.authenticationService = authenticationService;
 	}
 
 	@PostMapping
 	public ResponseEntity<String> createDevice(@RequestBody @Valid CreateControlDeviceForm form) {
-		ControlDevice device = createControlDevice.create(authenticationService.getAuthenticatedUser(), form.deviceType(), form.tag(), form.location());
+		ControlDevice device = createControlDevice.create(form.deviceType(), form.tag(), form.location());
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(device.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 
 	@DeleteMapping
 	public ResponseEntity<Void> deleteDevice(@RequestParam("id") String id) {
-		deleteControlDevice.delete(authenticationService.getAuthenticatedUser(), id);
+		deleteControlDevice.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 
@@ -74,9 +70,9 @@ public class ControlDeviceController {
 		return ResponseEntity.ok().body(device);
 	}
 	
-	@GetMapping("/user/{user_id}")
-	public ResponseEntity<List<ControlDevice>> findAllDevicesByUser(@PathVariable String user_id){
-		List<ControlDevice> devices = findControlDevice.findAllByUser(user_id);
+	@GetMapping("/user")
+	public ResponseEntity<List<ControlDevice>> findAllDevicesByUser(){
+		List<ControlDevice> devices = findControlDevice.findAllByUser();
 		return ResponseEntity.ok().body(devices);
 	}
 	

@@ -2,7 +2,6 @@ package com.dougfsilva.iotnizer.config.security;
 
 import java.util.Optional;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,8 +26,4 @@ public class AuthenticationService implements UserDetailsService {
 		return user.orElseThrow(() -> new UsernameNotFoundException("User " + username + " not found in database!"));
 	}
 	
-	public User getAuthenticatedUser() {
-		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	}
-
 }

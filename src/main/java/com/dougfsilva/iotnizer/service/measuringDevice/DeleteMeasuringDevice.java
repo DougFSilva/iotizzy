@@ -2,11 +2,10 @@ package com.dougfsilva.iotnizer.service.measuringDevice;
 
 import org.springframework.stereotype.Service;
 
-import com.dougfsilva.iotnizer.exception.OperationNotPermittedException;
 import com.dougfsilva.iotnizer.model.MeasuringDevice;
-import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.mqtt.MqttTopicService;
 import com.dougfsilva.iotnizer.repository.MeasurindDeviceRepository;
+import com.dougfsilva.iotnizer.service.AuthenticatedUserService;
 
 @Service
 public class DeleteMeasuringDevice {
@@ -16,19 +15,20 @@ public class DeleteMeasuringDevice {
 	private final FindMeasuringDevice findMeasuringDevice;
 	
 	private final MqttTopicService mqttTopicService;
+	
+	private final AuthenticatedUserService authenticatedUserService;
 
-	public DeleteMeasuringDevice(MeasurindDeviceRepository repository, FindMeasuringDevice findMeasuringDevice, MqttTopicService mqttTopicService) {
+	public DeleteMeasuringDevice(MeasurindDeviceRepository repository, FindMeasuringDevice findMeasuringDevice,
+			MqttTopicService mqttTopicService, AuthenticatedUserService authenticatedUserService) {
 		this.repository = repository;
 		this.findMeasuringDevice = findMeasuringDevice;
 		this.mqttTopicService = mqttTopicService;
+		this.authenticatedUserService = authenticatedUserService;
 	}
 	
-	public void delete(User user, String id) {
+	public void delete(String id) {
 		MeasuringDevice device = findMeasuringDevice.findById(id);
-		if(!user.getId().equals(device.getUser_id())) {
-			throw new OperationNotPermittedException("Deleting devices belonging to another user is not allowed!");
-		}
-		mqttTopicService.removeTopic(user, device.getMqttTopic());
+		mqttTopicService.removeTopic(authenticatedUserService.getUser(), device.getMqttTopic());
 		repository.delete(device);
 		repository.deleteCollection(MeasuringDeviceCollectionNameGenerator.generate(device));
 	}

@@ -46,7 +46,8 @@ public class ControlDeviceRepository {
 	public ControlDevice update(ControlDevice device) {
 		ControlDevice updatedDevice = (getCollection().findOneAndUpdate(Filters.eq(new ObjectId(device.getId())),
 				Updates.combine(Updates.set("deviceType", device.getDeviceType()), Updates.set("tag", device.getTag()),
-						Updates.set("location", device.getLocation())),
+						Updates.set("location", device.getLocation()), 
+						Updates.set("mqttTopic", device.getMqttTopic())),
 				new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)));
 		connection.close();
 		return updatedDevice;

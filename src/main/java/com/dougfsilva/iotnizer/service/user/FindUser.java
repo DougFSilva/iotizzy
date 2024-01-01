@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.dougfsilva.iotnizer.exception.ObjectNotFoundException;
-import com.dougfsilva.iotnizer.model.Email;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.repository.UserRepository;
 
