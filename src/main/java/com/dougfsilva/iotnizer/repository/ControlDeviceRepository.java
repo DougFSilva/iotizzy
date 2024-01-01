@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.dougfsilva.iotnizer.config.mongo.ControlDeviceCodec;
@@ -22,59 +23,61 @@ import com.mongodb.client.result.InsertOneResult;
 @Repository
 public class ControlDeviceRepository {
 	
-	 private final MongoConnection connection;
+    @Value("${mongodb.database}")
+    private String database;
 
-	    public ControlDeviceRepository(MongoConnection connection) {
-	        this.connection = connection;
-	    }
+	private final MongoConnection connection;
 
-	    public String create(ControlDevice device) {
-	        InsertOneResult insertOneResult = getCollection().insertOne(device);
-	        connection.close();
-	        return insertOneResult.getInsertedId().asObjectId().getValue().toHexString();
-	    }
+	public ControlDeviceRepository(MongoConnection connection) {
+		this.connection = connection;
+	}
 
-	    public void delete(ControlDevice device) {
-	        getCollection().deleteOne(Filters.eq(new ObjectId(device.getId())));
-	        connection.close();
-	    }
-	    
-		public ControlDevice update(ControlDevice device) {
-			ControlDevice updatedDevice = (getCollection().findOneAndUpdate(Filters.eq(new ObjectId(device.getId())),
-					Updates.combine(Updates.set("deviceType", device.getDeviceType()), 
-							Updates.set("tag", device.getTag()),
-							Updates.set("location", device.getLocation())),
-					new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)));
-			connection.close();
-			return updatedDevice;
-		}
+	public String create(ControlDevice device) {
+		InsertOneResult insertOneResult = getCollection().insertOne(device);
+		connection.close();
+		return insertOneResult.getInsertedId().asObjectId().getValue().toHexString();
+	}
 
-	    public Optional<ControlDevice> findById(String id) {
-	        Optional<ControlDevice> device = Optional
-	                .ofNullable((ControlDevice) getCollection().find(Filters.eq(new ObjectId(id))).first());
-	        connection.close();
-	        return device;
-	    }
-	    
-	    public List<ControlDevice> findAllByUser(User user) {
-			List<ControlDevice> devices = new ArrayList<>();
-			MongoCursor<ControlDevice> mongoCursor = getCollection().find(Filters.eq("user_id", user.getId())).batchSize(10000).iterator();
-			mongoCursor.forEachRemaining(cursor -> devices.add(cursor));
-			connection.close();
-			return devices;
-		}
+	public void delete(ControlDevice device) {
+		getCollection().deleteOne(Filters.eq(new ObjectId(device.getId())));
+		connection.close();
+	}
 
-	    
-	    public List<ControlDevice> findAll() {
-			List<ControlDevice> devices = new ArrayList<>();
-			MongoCursor<ControlDevice> mongoCursor = getCollection().find().batchSize(10000).iterator();
-			mongoCursor.forEachRemaining(cursor -> devices.add(cursor));
-			connection.close();
-			return devices;
-		}
+	public ControlDevice update(ControlDevice device) {
+		ControlDevice updatedDevice = (getCollection().findOneAndUpdate(Filters.eq(new ObjectId(device.getId())),
+				Updates.combine(Updates.set("deviceType", device.getDeviceType()), Updates.set("tag", device.getTag()),
+						Updates.set("location", device.getLocation())),
+				new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)));
+		connection.close();
+		return updatedDevice;
+	}
 
-	    private MongoCollection<ControlDevice> getCollection() {
-	        return connection.connect(new ControlDeviceCodec(), "control_device", ControlDevice.class);
-	    }
+	public Optional<ControlDevice> findById(String id) {
+		Optional<ControlDevice> device = Optional
+				.ofNullable((ControlDevice) getCollection().find(Filters.eq(new ObjectId(id))).first());
+		connection.close();
+		return device;
+	}
+
+	public List<ControlDevice> findAllByUser(User user) {
+		List<ControlDevice> devices = new ArrayList<>();
+		MongoCursor<ControlDevice> mongoCursor = getCollection().find(Filters.eq("user_id", user.getId()))
+				.batchSize(10000).iterator();
+		mongoCursor.forEachRemaining(cursor -> devices.add(cursor));
+		connection.close();
+		return devices;
+	}
+
+	public List<ControlDevice> findAll() {
+		List<ControlDevice> devices = new ArrayList<>();
+		MongoCursor<ControlDevice> mongoCursor = getCollection().find().batchSize(10000).iterator();
+		mongoCursor.forEachRemaining(cursor -> devices.add(cursor));
+		connection.close();
+		return devices;
+	}
+
+	private MongoCollection<ControlDevice> getCollection() {
+        return connection.connect(new ControlDeviceCodec()).getClient().getDatabase(database).getCollection("control_device", ControlDevice.class);
+    }
 
 }

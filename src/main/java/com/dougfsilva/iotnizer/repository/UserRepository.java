@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.dougfsilva.iotnizer.config.mongo.MongoConnection;
@@ -23,6 +24,9 @@ import com.mongodb.client.result.InsertOneResult;
 
 @Repository
 public class UserRepository {
+	
+    @Value("${mongodb.database}")
+    private String database;
 
     private final MongoConnection connection;
 
@@ -77,8 +81,8 @@ public class UserRepository {
 		return users;
 	}
 
-    private MongoCollection<User> getCollection() {
-        return connection.connect(new UserCodec(), "user", User.class);
+	private MongoCollection<User> getCollection() {
+        return connection.connect(new UserCodec()).getClient().getDatabase(database).getCollection("user", User.class);
     }
 
 }

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import com.dougfsilva.iotnizer.exception.OperationNotPermittedException;
 import com.dougfsilva.iotnizer.model.ControlDevice;
 import com.dougfsilva.iotnizer.model.User;
-import com.dougfsilva.iotnizer.mqtt.TopicManagerMqtt;
+import com.dougfsilva.iotnizer.mqtt.MqttTopicService;
 import com.dougfsilva.iotnizer.repository.ControlDeviceRepository;
 
 @Service
@@ -15,12 +15,12 @@ public class DeleteControlDevice {
 	
 	private final FindControlDevice findControlDevice;
 	
-	private final TopicManagerMqtt topicManagerMqtt;
+	private final MqttTopicService mqttTopicService;
 
-	public DeleteControlDevice(ControlDeviceRepository repository, FindControlDevice findControlDevice, TopicManagerMqtt topicManagerMqtt) {
+	public DeleteControlDevice(ControlDeviceRepository repository, FindControlDevice findControlDevice, MqttTopicService mqttTopicService) {
 		this.repository = repository;
 		this.findControlDevice = findControlDevice;
-		this.topicManagerMqtt = topicManagerMqtt;
+		this.mqttTopicService = mqttTopicService;
 	}
 
 	public void delete(User user, String id) {
@@ -28,7 +28,7 @@ public class DeleteControlDevice {
 		if(!user.getId().equals(device.getUser_id())) {
 			throw new OperationNotPermittedException("Deleting devices belonging to another user is not allowed!");
 		}
-		topicManagerMqtt.removeTopic(user, device.getMqttTopic());
+		mqttTopicService.removeTopic(user, device.getMqttTopic());
 		repository.delete(device);
 	}
 }

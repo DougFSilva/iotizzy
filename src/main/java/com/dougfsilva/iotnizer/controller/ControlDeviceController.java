@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/control-device")
 public class ControlDeviceController {
 
-	private final CreateControlDevice createDevice;
+	private final CreateControlDevice createControlDevice;
 
 	private final DeleteControlDevice deleteControlDevice;
 
@@ -40,9 +40,9 @@ public class ControlDeviceController {
 	
 	private final AuthenticationService authenticationService;
 
-	public ControlDeviceController(CreateControlDevice createDevice, DeleteControlDevice deleteControlDevice,
+	public ControlDeviceController(CreateControlDevice createControlDevice, DeleteControlDevice deleteControlDevice,
 			UpdateControlDevice updateControleDevice, FindControlDevice findControlDevice, AuthenticationService authenticationService) {
-		this.createDevice = createDevice;
+		this.createControlDevice = createControlDevice;
 		this.deleteControlDevice = deleteControlDevice;
 		this.findControlDevice = findControlDevice;
 		this.updateControleDevice = updateControleDevice;
@@ -51,7 +51,7 @@ public class ControlDeviceController {
 
 	@PostMapping
 	public ResponseEntity<String> createDevice(@RequestBody @Valid CreateControlDeviceForm form) {
-		ControlDevice device = createDevice.create(authenticationService.getAuthenticatedUser(), form.deviceType(), form.tag(), form.location());
+		ControlDevice device = createControlDevice.create(authenticationService.getAuthenticatedUser(), form.deviceType(), form.tag(), form.location());
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(device.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}

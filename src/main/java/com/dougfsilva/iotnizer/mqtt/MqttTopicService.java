@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import com.dougfsilva.iotnizer.model.User;
 
 @Service
-public class TopicManagerMqtt {
+public class MqttTopicService {
 
 	private final MqttParams mqtt;
 
-	public TopicManagerMqtt(MqttParams mqtt) {
+	public MqttTopicService(MqttParams mqtt) {
 		this.mqtt = mqtt;
 	}
 	
