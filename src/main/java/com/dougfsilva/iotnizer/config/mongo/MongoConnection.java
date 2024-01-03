@@ -36,7 +36,7 @@ public class MongoConnection {
 
     private MongoClient client;
 
-    public MongoConnection connect(Codec<?> codec) {
+    public MongoConnection connect(Codec<?>... codec) {
         CodecRegistry codecRegistry = CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
                 CodecRegistries.fromCodecs(codec));
         MongoClientSettings clientSettings = MongoClientSettings.builder()
