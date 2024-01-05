@@ -1,13 +1,15 @@
 package com.dougfsilva.iotnizer.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -15,9 +17,7 @@ public class MeasuredValue {
 
 	private String id;
 	
-	private String device_id;
-	
-	private Date timestamp;
+	private LocalDateTime timestamp;
 	
 	private Double value;
 }

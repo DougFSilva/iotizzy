@@ -4,13 +4,13 @@ import org.springframework.stereotype.Service;
 
 import com.dougfsilva.iotnizer.model.MeasuringDevice;
 import com.dougfsilva.iotnizer.mqtt.MqttTopicService;
-import com.dougfsilva.iotnizer.repository.MeasurindDeviceRepository;
+import com.dougfsilva.iotnizer.repository.MeasuringDeviceRepository;
 import com.dougfsilva.iotnizer.service.AuthenticatedUserService;
 
 @Service
 public class DeleteMeasuringDevice {
 
-	private final MeasurindDeviceRepository repository;
+	private final MeasuringDeviceRepository repository;
 
 	private final FindMeasuringDevice findMeasuringDevice;
 	
@@ -18,7 +18,7 @@ public class DeleteMeasuringDevice {
 	
 	private final AuthenticatedUserService authenticatedUserService;
 
-	public DeleteMeasuringDevice(MeasurindDeviceRepository repository, FindMeasuringDevice findMeasuringDevice,
+	public DeleteMeasuringDevice(MeasuringDeviceRepository repository, FindMeasuringDevice findMeasuringDevice,
 			MqttTopicService mqttTopicService, AuthenticatedUserService authenticatedUserService) {
 		this.repository = repository;
 		this.findMeasuringDevice = findMeasuringDevice;
@@ -30,6 +30,5 @@ public class DeleteMeasuringDevice {
 		MeasuringDevice device = findMeasuringDevice.findById(id);
 		mqttTopicService.removeTopic(authenticatedUserService.getUser(), device.getMqttTopic());
 		repository.delete(device);
-		repository.deleteCollection(MeasuringDeviceCollectionNameGenerator.generate(device));
 	}
 }

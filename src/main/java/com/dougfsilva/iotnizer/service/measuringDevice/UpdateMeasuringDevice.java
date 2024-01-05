@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service;
 import com.dougfsilva.iotnizer.model.MeasuringDevice;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.mqtt.MqttTopicService;
-import com.dougfsilva.iotnizer.repository.MeasurindDeviceRepository;
+import com.dougfsilva.iotnizer.repository.MeasuringDeviceRepository;
 import com.dougfsilva.iotnizer.service.AuthenticatedUserService;
 
 @Service
 public class UpdateMeasuringDevice {
 
-	private final MeasurindDeviceRepository repository;
+	private final MeasuringDeviceRepository repository;
 
 	private final FindMeasuringDevice findMeasuringDevice;
 	
@@ -19,7 +19,7 @@ public class UpdateMeasuringDevice {
 	
 	private final AuthenticatedUserService authenticatedUserService;
 
-	public UpdateMeasuringDevice(MeasurindDeviceRepository repository, FindMeasuringDevice findMeasuringDevice,
+	public UpdateMeasuringDevice(MeasuringDeviceRepository repository, FindMeasuringDevice findMeasuringDevice,
 			MqttTopicService mqttTopicService, AuthenticatedUserService authenticatedUserService) {
 		this.repository = repository;
 		this.findMeasuringDevice = findMeasuringDevice;
@@ -32,8 +32,8 @@ public class UpdateMeasuringDevice {
 		User user = authenticatedUserService.getUser();
 		if(tag != null && !tag.isBlank() && !tag.equals(device.getTag())) {
 			String formatedTag = tag.toUpperCase().replaceAll(" ", "_").replaceAll("/", "-").replaceAll("#", "H").replaceAll("\\+", "M");
-			String topic = String.format("iotnizer/persist/%s/%s",user.getId(), formatedTag);
-			mqttTopicService.removeTopic(user, device.getMqttTopic());
+			String topic = String.format("iotnizer/persist/%s/%s/%s",user.getId(), device.getId(), formatedTag);
+			mqttTopicService.removeTopic(user, device.getMqttTopic());	
 			device.setTag(tag);
 			device.setMqttTopic(topic);
 			mqttTopicService.addTopic(user, topic);

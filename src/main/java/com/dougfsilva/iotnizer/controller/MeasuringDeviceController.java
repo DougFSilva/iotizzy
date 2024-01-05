@@ -1,6 +1,7 @@
 package com.dougfsilva.iotnizer.controller;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -14,12 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.dougfsilva.iotnizer.dto.AddMeasuredValueForm;
 import com.dougfsilva.iotnizer.dto.CreateMeasuringDeviceForm;
 import com.dougfsilva.iotnizer.dto.UpdateMeasuringDeviceForm;
 import com.dougfsilva.iotnizer.model.MeasuringDevice;
+import com.dougfsilva.iotnizer.service.measuringDevice.AddValueFromMeasuringDevice;
 import com.dougfsilva.iotnizer.service.measuringDevice.CreateMeasuringDevice;
 import com.dougfsilva.iotnizer.service.measuringDevice.DeleteMeasuringDevice;
 import com.dougfsilva.iotnizer.service.measuringDevice.FindMeasuringDevice;
+import com.dougfsilva.iotnizer.service.measuringDevice.RemoveValuesFromMeasuringDevice;
 import com.dougfsilva.iotnizer.service.measuringDevice.UpdateMeasuringDevice;
 
 import jakarta.validation.Valid;
@@ -36,13 +40,20 @@ public class MeasuringDeviceController {
 	
 	private final FindMeasuringDevice findMeasuringDevice;
 	
+	private final AddValueFromMeasuringDevice addValueInMeasuringDevice;
+	
+	private final RemoveValuesFromMeasuringDevice removeValuesOfMeasuringDevice;
+	
 	public MeasuringDeviceController(CreateMeasuringDevice createMeasuringDevice,
 			DeleteMeasuringDevice deleteMeasuringDevice, UpdateMeasuringDevice updateMeasuringDevice,
-			FindMeasuringDevice findMeasuringDevice) {
+			FindMeasuringDevice findMeasuringDevice, AddValueFromMeasuringDevice addValueInMeasuringDevice, 
+			RemoveValuesFromMeasuringDevice removeValuesOfMeasuringDevice) {
 		this.createMeasuringDevice = createMeasuringDevice;
 		this.deleteMeasuringDevice = deleteMeasuringDevice;
 		this.updateMeasuringDevice = updateMeasuringDevice;
 		this.findMeasuringDevice = findMeasuringDevice;
+		this.addValueInMeasuringDevice = addValueInMeasuringDevice;
+		this.removeValuesOfMeasuringDevice = removeValuesOfMeasuringDevice;
 	}
 	
 	@PostMapping
@@ -62,6 +73,25 @@ public class MeasuringDeviceController {
 	public ResponseEntity<MeasuringDevice> updateMeasuringDevice(@RequestParam("id") String id, @RequestBody UpdateMeasuringDeviceForm form) {
 		MeasuringDevice device = updateMeasuringDevice.update(id, form.tag(), form.location());
 		return ResponseEntity.ok().body(device);
+	}
+	
+	@PostMapping("/add-value")
+	public ResponseEntity<Void> addValuesFromMeasuringDevice(@RequestBody AddMeasuredValueForm form) {
+		addValueInMeasuringDevice.add(form.device_id(), form.values(), form.timestamp());
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/remove-value")
+	public ResponseEntity<Void> removeValueFromMeasuringDevice(@RequestParam("device_id") String device_id, @RequestParam("value_id") String value_id) {
+		removeValuesOfMeasuringDevice.removeById(device_id, value_id);
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/remove-value/date")
+	public ResponseEntity<Void> removeValueFromMeasuringDeviceByTimestamp(
+			@RequestParam("device_id") String device_id, @RequestParam("from") LocalDateTime inicialTimestamp, @RequestParam("to") LocalDateTime finalTimestamp){
+		removeValuesOfMeasuringDevice.removeByTimestamp(device_id, inicialTimestamp, finalTimestamp);
+		return ResponseEntity.ok().build();
 	}
 	
 	@GetMapping

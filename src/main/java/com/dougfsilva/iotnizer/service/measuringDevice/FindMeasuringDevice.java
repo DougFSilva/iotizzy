@@ -8,17 +8,17 @@ import org.springframework.stereotype.Service;
 import com.dougfsilva.iotnizer.exception.ObjectNotFoundException;
 import com.dougfsilva.iotnizer.model.MeasuringDevice;
 import com.dougfsilva.iotnizer.model.User;
-import com.dougfsilva.iotnizer.repository.MeasurindDeviceRepository;
+import com.dougfsilva.iotnizer.repository.MeasuringDeviceRepository;
 import com.dougfsilva.iotnizer.service.AuthenticatedUserService;
 
 @Service
 public class FindMeasuringDevice {
 
-	private final MeasurindDeviceRepository repository;
+	private final MeasuringDeviceRepository repository;
 	
 	private final AuthenticatedUserService authenticatedUserService;
 
-	public FindMeasuringDevice(MeasurindDeviceRepository repository, AuthenticatedUserService authenticatedUserService) {
+	public FindMeasuringDevice(MeasuringDeviceRepository repository, AuthenticatedUserService authenticatedUserService) {
 		this.repository = repository;
 		this.authenticatedUserService = authenticatedUserService;
 	}

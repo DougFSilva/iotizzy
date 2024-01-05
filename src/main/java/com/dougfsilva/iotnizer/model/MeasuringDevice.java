@@ -1,5 +1,7 @@
 package com.dougfsilva.iotnizer.model;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,5 +22,7 @@ public class MeasuringDevice {
 	private String location;
 
 	private String mqttTopic;
+	
+	private List<MeasuredValue> values;
 
 }
