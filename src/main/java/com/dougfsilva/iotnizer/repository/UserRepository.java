@@ -61,14 +61,14 @@ public class UserRepository {
 
     public Optional<User> findById(String id) {
         Optional<User> user = Optional
-                .ofNullable((User) getCollection().find(Filters.eq(new ObjectId(id))).first());
+                .ofNullable(getCollection().find(Filters.eq(new ObjectId(id))).first());
         connection.close();
         return user;
     }
 
     public Optional<User> findByEmail(Email email) {
         Optional<User> user = Optional
-                .ofNullable((User) getCollection().find(Filters.eq("email", email.getAddress())).first());
+                .ofNullable(getCollection().find(Filters.eq("email", email.getAddress())).first());
         connection.close();
         return user;
     }

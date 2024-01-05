@@ -87,16 +87,23 @@ public class MeasuringDeviceController {
 		return ResponseEntity.ok().build();
 	}
 	
-	@DeleteMapping("/remove-value/date")
+	@DeleteMapping("/remove-value/timestamp")
 	public ResponseEntity<Void> removeValueFromMeasuringDeviceByTimestamp(
-			@RequestParam("device_id") String device_id, @RequestParam("from") LocalDateTime inicialTimestamp, @RequestParam("to") LocalDateTime finalTimestamp){
-		removeValuesOfMeasuringDevice.removeByTimestamp(device_id, inicialTimestamp, finalTimestamp);
+			@RequestParam("id") String id, @RequestParam("from") LocalDateTime inicialTimestamp, @RequestParam("to") LocalDateTime finalTimestamp){
+		removeValuesOfMeasuringDevice.removeByTimestamp(id, inicialTimestamp, finalTimestamp);
 		return ResponseEntity.ok().build();
 	}
 	
 	@GetMapping
 	public ResponseEntity<MeasuringDevice> findMeasuringDeviceById(@RequestParam("id") String id){
 		MeasuringDevice device = findMeasuringDevice.findById(id);
+		return ResponseEntity.ok().body(device);
+	}
+	
+	@GetMapping("/timestamp")
+	public ResponseEntity<MeasuringDevice> findMeasuringDeviceByIdAndFilterValuesByTimestamp(
+			@RequestParam("id") String device_id, @RequestParam("from") LocalDateTime inicialTimestamp, @RequestParam("to") LocalDateTime finalTimestamp){
+		MeasuringDevice device = findMeasuringDevice.findByIdAndfilterValuesByTimestamp(device_id, inicialTimestamp, finalTimestamp);
 		return ResponseEntity.ok().body(device);
 	}
 	

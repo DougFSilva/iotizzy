@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -17,17 +16,15 @@ import com.dougfsilva.iotnizer.config.mongo.MongoConnection;
 import com.dougfsilva.iotnizer.model.MeasuredValue;
 import com.dougfsilva.iotnizer.model.MeasuringDevice;
 import com.dougfsilva.iotnizer.model.User;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.DeleteOptions;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.PushOptions;
 import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.InsertOneResult;
-import com.mongodb.client.result.UpdateResult;
 
 @Repository
 public class MeasuringDeviceRepository {
@@ -69,24 +66,24 @@ public class MeasuringDeviceRepository {
 		connection.close();
 	}
 	
-	public void removeValue(User user,String device_id, String value_id) {
-		getCollection().updateMany(Filters.and(Filters.eq(new ObjectId(device_id)), Filters.eq("user_id",user.getId())), 
+	public void removeValue(MeasuringDevice device, String value_id) {
+		getCollection().updateMany(Filters.eq(new ObjectId(device.getId())), 
 				Updates.pullByFilter(Filters.eq("values", new Document().append("_id", new ObjectId(value_id)))));
 		connection.close();
 	}
 	
-	public void removeValueByTimestamp(User user, String device_id, LocalDateTime inicialTimestamp, LocalDateTime finalTimeStamp) {
-		getCollection().updateMany(Filters.and(Filters.eq(new ObjectId(device_id)), Filters.eq("user_id",user.getId())), 
+	public void removeValueByTimestamp(MeasuringDevice device, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp) {
+		getCollection().updateMany(Filters.eq(new ObjectId(device.getId())), 
 				Document.parse(String.format(
 						"{$pull : {values: {$and: [{timestamp: {$gte:ISODate('%s')}}, {timestamp: {$lte:ISODate('%s')}}]}}}", 
-						inicialTimestamp.toString() + "Z", finalTimeStamp.toString() + "Z")));
+						initialTimestamp.toString() + "Z", finalTimestamp.toString() + "Z")));
 		
 		connection.close();
 	}
 	
 	public Optional<MeasuringDevice> findById(String id) {
 		Optional<MeasuringDevice> device = Optional
-				.ofNullable((MeasuringDevice) getCollection().find(Filters.eq(new ObjectId(id))).first());
+				.ofNullable(getCollection().find(Filters.eq(new ObjectId(id)), MeasuringDevice.class).first());
 		connection.close();
 		return device;
 	}
@@ -98,6 +95,16 @@ public class MeasuringDeviceRepository {
 		mongoCursor.forEachRemaining(cursor -> devices.add(cursor));
 		connection.close();
 		return devices;
+	}
+	
+	public Optional<MeasuringDevice> findByIdAndfilterValuesByTimestamp(String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp){
+		Optional<MeasuringDevice> device = Optional.ofNullable(getCollection().aggregate(java.util.Arrays.asList(Aggregates.match(Filters.eq(new ObjectId(id))), 
+				Document.parse(String.format("{$project: {user_id:1, tag:1, location:1, mqttTopic:1, values:{$filter:{input:'$values',as:'value', cond: {$and :["
+						+ "{$gte:['$$value.timestamp', ISODate('%s')]},"
+						+ "{$lte:['$$value.timestamp', ISODate('%s')]}]}}}}}", 
+						initialTimestamp.toString() + "Z", finalTimestamp.toString() + "Z")))).first());
+		connection.close();
+		return device;
 	}
 
 	public List<MeasuringDevice> findAll() {

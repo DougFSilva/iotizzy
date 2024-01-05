@@ -55,7 +55,7 @@ public class ControlDeviceRepository {
 
 	public Optional<ControlDevice> findById(String id) {
 		Optional<ControlDevice> device = Optional
-				.ofNullable((ControlDevice) getCollection().find(Filters.eq(new ObjectId(id))).first());
+				.ofNullable(getCollection().find(Filters.eq(new ObjectId(id))).first());
 		connection.close();
 		return device;
 	}

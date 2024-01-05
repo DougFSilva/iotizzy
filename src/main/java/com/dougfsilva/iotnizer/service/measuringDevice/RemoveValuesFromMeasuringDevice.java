@@ -4,29 +4,28 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
-import com.dougfsilva.iotnizer.model.User;
+import com.dougfsilva.iotnizer.model.MeasuringDevice;
 import com.dougfsilva.iotnizer.repository.MeasuringDeviceRepository;
-import com.dougfsilva.iotnizer.service.AuthenticatedUserService;
 
 @Service
 public class RemoveValuesFromMeasuringDevice {
 
 	private final MeasuringDeviceRepository repository;
 	
-	private final AuthenticatedUserService authenticatedUserService;
-
-	public RemoveValuesFromMeasuringDevice(MeasuringDeviceRepository repository, AuthenticatedUserService authenticatedUserService) {
+	private final FindMeasuringDevice findMeasuringDevice;
+	
+	public RemoveValuesFromMeasuringDevice(MeasuringDeviceRepository repository, FindMeasuringDevice findMeasuringDevice) {
 		this.repository = repository;
-		this.authenticatedUserService = authenticatedUserService;
+		this.findMeasuringDevice = findMeasuringDevice;
 	}
 	
 	public void removeById(String device_id, String value_id) {
-		User user = authenticatedUserService.getUser();
-		repository.removeValue(user, device_id, value_id);
+		MeasuringDevice device = findMeasuringDevice.findById(device_id);
+		repository.removeValue(device, value_id);
 	}
 	
-	public void removeByTimestamp(String device_id, LocalDateTime inicialTimetamp, LocalDateTime finalTimestamp) {
-		User user = authenticatedUserService.getUser();
-		repository.removeValueByTimestamp(user, device_id, inicialTimetamp, finalTimestamp );
+	public void removeByTimestamp(String id, LocalDateTime inicialTimetamp, LocalDateTime finalTimestamp) {
+		MeasuringDevice device = findMeasuringDevice.findById(id);
+		repository.removeValueByTimestamp(device, inicialTimetamp, finalTimestamp );
 	}
 }
