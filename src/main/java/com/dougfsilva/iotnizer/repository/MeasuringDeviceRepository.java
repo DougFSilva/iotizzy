@@ -44,8 +44,10 @@ public class MeasuringDeviceRepository {
 		return insertOneResult.getInsertedId().asObjectId().getValue().toHexString();
 	}
 
-	public void delete(MeasuringDevice device) {
-		getCollection().deleteOne(Filters.eq(new ObjectId(device.getId())));
+	public void delete(User user, MeasuringDevice device) {
+		getCollection().deleteOne(Filters.and(
+				Filters.eq(new ObjectId(device.getId())), 
+				Filters.eq("user_id", user.getId())));
 		connection.close();
 	}
 	
@@ -54,9 +56,10 @@ public class MeasuringDeviceRepository {
 		connection.close();
 	}
 
-	public MeasuringDevice update(MeasuringDevice device) {
-		MeasuringDevice updatedDevice = (getCollection().findOneAndUpdate(
-				Filters.eq(new ObjectId(device.getId())),
+	public MeasuringDevice update(User user, MeasuringDevice device) {
+		MeasuringDevice updatedDevice = (getCollection().findOneAndUpdate(Filters.and(
+				Filters.eq(new ObjectId(device.getId())), 
+				Filters.eq("user_id", user.getId())),
 				Updates.combine(Updates.set("tag", device.getTag()), 
 						Updates.set("location", device.getLocation()),
 						Updates.set("mqttTopic", device.getMqttTopic())),
@@ -66,40 +69,53 @@ public class MeasuringDeviceRepository {
 	}
 	
 	public void addValues(User user, String device_id, List<MeasuredValue> value) {
-		getCollection().updateOne(Filters.and(Filters.eq(new ObjectId(device_id)), Filters.eq("user_id",user.getId())), 
+		getCollection().updateOne(Filters.and(
+				Filters.eq(new ObjectId(device_id)), 
+				Filters.eq("user_id",user.getId())), 
 				Updates.pushEach("values", value, new PushOptions().slice(-12000)));
 		connection.close();
 	}
 	
-	public void removeValue(MeasuringDevice device, String value_id) {
-		getCollection().updateMany(Filters.eq(new ObjectId(device.getId())), 
+	public void removeValue(User user, MeasuringDevice device, String value_id) {
+		getCollection().updateMany(Filters.and(
+				Filters.eq(new ObjectId(device.getId())), 
+				Filters.eq("user_id", user.getId())), 
 				Updates.pullByFilter(Filters.eq("values", new Document().append("_id", new ObjectId(value_id)))));
 		connection.close();
 	}
 	
-	public void removeValueByTimestamp(MeasuringDevice device, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp) {
-		getCollection().updateMany(Filters.eq(new ObjectId(device.getId())), 
+	public void removeValueByTimestamp(User user, MeasuringDevice device, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp) {
+		getCollection().updateMany(Filters.and(
+				Filters.eq(new ObjectId(device.getId())), 
+				Filters.eq("user_id", user.getId())), 
 				Document.parse(String.format(
 						"{$pull : {values: {$and: [{timestamp: {$gte:ISODate('%s')}}, {timestamp: {$lte:ISODate('%s')}}]}}}", 
 						initialTimestamp.toString() + "Z", finalTimestamp.toString() + "Z")));
-		
 		connection.close();
 	}
 	
-	public void removeAllValuesByDevice(MeasuringDevice device) {
-		getCollection().updateOne(Filters.eq(new ObjectId(device.getId())), Updates.set("values", new ArrayList<>()));
+	public void removeAllValuesByDevice(User user, MeasuringDevice device) {
+		getCollection().updateMany(Filters.and(
+				Filters.eq(new ObjectId(device.getId())), 
+				Filters.eq("user_id", user.getId())), 
+				Updates.set("values", new ArrayList<>()));
 		connection.close();
 	}
 	
-	public Optional<MeasuringDevice> findById(String id) {
+	public Optional<MeasuringDevice> findById(User user, String id) {
 		Optional<MeasuringDevice> device = Optional
-				.ofNullable(getCollection().find(Filters.eq(new ObjectId(id)), MeasuringDevice.class).first());
+				.ofNullable(getCollection().find(Filters.and(
+						Filters.eq(new ObjectId(id)), 
+						Filters.eq("user_id", user.getId())), MeasuringDevice.class).first());
 		connection.close();
 		return device;
 	}
 	
-	public Optional<MeasuringDevice> findByIdAndfilterValuesByTimestamp(String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp){
-		Optional<MeasuringDevice> device = Optional.ofNullable(getCollection().aggregate(java.util.Arrays.asList(Aggregates.match(Filters.eq(new ObjectId(id))), 
+	public Optional<MeasuringDevice> findByIdAndfilterValuesByTimestamp(User user, String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp){
+		Optional<MeasuringDevice> device = Optional.ofNullable(getCollection().aggregate(java.util.Arrays.asList(
+				Aggregates.match(Filters.and(
+						Filters.eq(new ObjectId(id)), 
+						Filters.eq("user_id", user.getId()))), 
 				Document.parse(String.format("{$project: {user_id:1, tag:1, location:1, mqttTopic:1, values:{$filter:{input:'$values',as:'value', cond: {$and :["
 						+ "{$gte:['$$value.timestamp', ISODate('%s')]},"
 						+ "{$lte:['$$value.timestamp', ISODate('%s')]}]}}}}}", 
@@ -109,8 +125,11 @@ public class MeasuringDeviceRepository {
 	}
 	
 	public Optional<MeasuringDevice> findByIdAndFilterValuesByTimestampAndValues(
-			String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp, Double initialValue, Double finalValue){
-		Optional<MeasuringDevice> device = Optional.ofNullable(getCollection().aggregate(java.util.Arrays.asList(Aggregates.match(Filters.eq(new ObjectId(id))), 
+			User user, String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp, Double initialValue, Double finalValue){
+		Optional<MeasuringDevice> device = Optional.ofNullable(getCollection().aggregate(java.util.Arrays.asList(
+				Aggregates.match(Filters.and(
+						Filters.eq(new ObjectId(id)), 
+						Filters.eq("user_id".concat(user.getId())))), 
 				Document.parse(String.format("{$project: {user_id:1, tag:1, location:1, mqttTopic:1, values:{$filter:{input:'$values',as:'value', cond: {$and :["
 						+ "{$gte:['$$value.timestamp', ISODate('%s')]},"
 						+ "{$lte:['$$value.timestamp', ISODate('%s')]},"

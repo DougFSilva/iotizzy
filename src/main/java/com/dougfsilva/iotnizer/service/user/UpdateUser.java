@@ -18,14 +18,18 @@ public class UpdateUser {
 	private final UserRepository repository;
 
 	private final FindUser findUser;
+	
+	private final AuthenticatedUser authenticatedUser;
 
-	public UpdateUser(UserRepository repository, FindUser findUser) {
+
+	public UpdateUser(UserRepository repository, FindUser findUser, AuthenticatedUser authenticatedUser) {
 		this.repository = repository;
 		this.findUser = findUser;
+		this.authenticatedUser = authenticatedUser;
 	}
 
-	public User update(String id, String name, String email, ProfileType profileType) {
-		User user = findUser.findById(id);
+	public User update(String name, String email, ProfileType profileType) {
+		User user = authenticatedUser.getUser();
 		if (email != null) {
 			Email newEmail = new Email(email);
 			if (repository.findByEmail(newEmail).isPresent()) {

@@ -38,8 +38,10 @@ public class ControlDeviceRepository {
 		return insertOneResult.getInsertedId().asObjectId().getValue().toHexString();
 	}
 
-	public void delete(ControlDevice device) {
-		getCollection().deleteOne(Filters.eq(new ObjectId(device.getId())));
+	public void delete(User user, ControlDevice device) {
+		getCollection().deleteOne(Filters.and(
+				Filters.eq(new ObjectId(device.getId())), 
+				Filters.eq("user_id", user.getId())));
 		connection.close();
 	}
 	
@@ -48,9 +50,13 @@ public class ControlDeviceRepository {
 		connection.close();
 	}
 
-	public ControlDevice update(ControlDevice device) {
-		ControlDevice updatedDevice = (getCollection().findOneAndUpdate(Filters.eq(new ObjectId(device.getId())),
-				Updates.combine(Updates.set("deviceType", device.getDeviceType()), Updates.set("tag", device.getTag()),
+	public ControlDevice update(User user, ControlDevice device) {
+		ControlDevice updatedDevice = (getCollection().findOneAndUpdate(Filters.and(
+				Filters.eq(new ObjectId(device.getId())), 
+				Filters.eq("user_id", user.getId())),
+				Updates.combine(
+						Updates.set("deviceType", device.getDeviceType()), 
+						Updates.set("tag", device.getTag()),
 						Updates.set("location", device.getLocation()), 
 						Updates.set("mqttTopic", device.getMqttTopic())),
 				new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)));
@@ -58,9 +64,11 @@ public class ControlDeviceRepository {
 		return updatedDevice;
 	}
 
-	public Optional<ControlDevice> findById(String id) {
+	public Optional<ControlDevice> findById(User user, String id) {
 		Optional<ControlDevice> device = Optional
-				.ofNullable(getCollection().find(Filters.eq(new ObjectId(id))).first());
+				.ofNullable(getCollection().find(Filters.and(
+						Filters.eq(new ObjectId(id)),
+						Filters.eq("user_id", user.getId()))).first());
 		connection.close();
 		return device;
 	}

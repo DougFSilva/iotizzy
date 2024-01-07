@@ -7,7 +7,7 @@ import com.dougfsilva.iotnizer.model.ControlDeviceType;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.mqtt.MqttTopicService;
 import com.dougfsilva.iotnizer.repository.ControlDeviceRepository;
-import com.dougfsilva.iotnizer.service.AuthenticatedUserService;
+import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 
 @Service
 public class UpdateControlDevice {
@@ -18,19 +18,19 @@ public class UpdateControlDevice {
 	
 	private final MqttTopicService mqttTopicService;
 	
-	private final AuthenticatedUserService authenticatedUserService;
+	private final AuthenticatedUser authenticatedUser;
 
 	public UpdateControlDevice(ControlDeviceRepository repository, FindControlDevice findControlDevice
-			, MqttTopicService mqttTopicService, AuthenticatedUserService authenticatedUserService) {
+			, MqttTopicService mqttTopicService, AuthenticatedUser authenticatedUser) {
 		this.repository = repository;
 		this.findControlDevice = findControlDevice;
 		this.mqttTopicService = mqttTopicService;
-		this.authenticatedUserService = authenticatedUserService;
+		this.authenticatedUser = authenticatedUser;
 	}
 	
 	public ControlDevice update(String id, ControlDeviceType deviceType, String tag, String location) {
 		ControlDevice device = findControlDevice.findById(id);
-		User user = authenticatedUserService.getUser();
+		User user = authenticatedUser.getUser();
 		if(deviceType != null) {
 			device.setDeviceType(deviceType);
 		}
@@ -45,7 +45,7 @@ public class UpdateControlDevice {
 		if(location != null && !location.isBlank()) {
 			device.setLocation(location);
 		}
-		ControlDevice updatedDevice = repository.update(device);
+		ControlDevice updatedDevice = repository.update(user, device);
 		return updatedDevice;
 	}
 }

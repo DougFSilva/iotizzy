@@ -6,7 +6,7 @@ import com.dougfsilva.iotnizer.model.ControlDevice;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.mqtt.MqttTopicService;
 import com.dougfsilva.iotnizer.repository.ControlDeviceRepository;
-import com.dougfsilva.iotnizer.service.AuthenticatedUserService;
+import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 
 @Service
 public class DeleteControlDevice {
@@ -17,23 +17,29 @@ public class DeleteControlDevice {
 
 	private final MqttTopicService mqttTopicService;
 
-	private final AuthenticatedUserService authenticatedUserService;
+	private final AuthenticatedUser authenticatedUser;
 
 	public DeleteControlDevice(ControlDeviceRepository repository, FindControlDevice findControlDevice,
-			MqttTopicService mqttTopicService, AuthenticatedUserService authenticatedUserService) {
+			MqttTopicService mqttTopicService, AuthenticatedUser authenticatedUser) {
 		this.repository = repository;
 		this.findControlDevice = findControlDevice;
 		this.mqttTopicService = mqttTopicService;
-		this.authenticatedUserService  = authenticatedUserService;
+		this.authenticatedUser  = authenticatedUser;
 	}
 
 	public void delete(String id) {
+		User user = authenticatedUser.getUser();
 		ControlDevice device = findControlDevice.findById(id);
-		mqttTopicService.removeTopic(authenticatedUserService.getUser(), device.getMqttTopic());
-		repository.delete(device);
+		mqttTopicService.removeTopic(user, device.getMqttTopic());
+		repository.delete(user, device);
 	}
 	
 	public void deleteAllByUser(User user) {
+		repository.deleteAllByUser(user);
+	}
+	
+	public void deleteAllByUser() {
+		User user = authenticatedUser.getUser();
 		repository.deleteAllByUser(user);
 	}
 }

@@ -6,7 +6,7 @@ import com.dougfsilva.iotnizer.model.MeasuringDevice;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.mqtt.MqttTopicService;
 import com.dougfsilva.iotnizer.repository.MeasuringDeviceRepository;
-import com.dougfsilva.iotnizer.service.AuthenticatedUserService;
+import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 
 @Service
 public class UpdateMeasuringDevice {
@@ -17,19 +17,19 @@ public class UpdateMeasuringDevice {
 	
 	private final MqttTopicService mqttTopicService;
 	
-	private final AuthenticatedUserService authenticatedUserService;
+	private final AuthenticatedUser authenticatedUser;
 
 	public UpdateMeasuringDevice(MeasuringDeviceRepository repository, FindMeasuringDevice findMeasuringDevice,
-			MqttTopicService mqttTopicService, AuthenticatedUserService authenticatedUserService) {
+			MqttTopicService mqttTopicService, AuthenticatedUser authenticatedUser) {
 		this.repository = repository;
 		this.findMeasuringDevice = findMeasuringDevice;
 		this.mqttTopicService = mqttTopicService;
-		this.authenticatedUserService = authenticatedUserService;
+		this.authenticatedUser = authenticatedUser;
 	}
 	
 	public MeasuringDevice update(String id, String tag, String location) {
 		MeasuringDevice device = findMeasuringDevice.findById(id);
-		User user = authenticatedUserService.getUser();
+		User user = authenticatedUser.getUser();
 		if(tag != null && !tag.isBlank() && !tag.equals(device.getTag())) {
 			String formatedTag = tag.toUpperCase().replaceAll(" ", "_").replaceAll("/", "-").replaceAll("#", "H").replaceAll("\\+", "M");
 			String topic = String.format("iotnizer/persist/%s/%s/%s",user.getId(), device.getId(), formatedTag);
@@ -41,7 +41,7 @@ public class UpdateMeasuringDevice {
 		if(location != null && !location.isBlank()) {
 			device.setLocation(location);
 		}
-		MeasuringDevice updatedDevice = repository.update(device);
+		MeasuringDevice updatedDevice = repository.update(user, device);
 		return updatedDevice;
 	}
 }

@@ -16,21 +16,31 @@ public class DeleteUser {
     private final DeleteClientMqtt deleteClientMqtt;
     private final DeleteMeasuringDevice deleteMeasuringDevice;
     private final DeleteControlDevice deleteControlDevice;
+    private final AuthenticatedUser authenticatedUser;
 
 
-    public DeleteUser(UserRepository repository, FindUser findUser, DeleteClientMqtt deleteClientMqtt,
-			DeleteMeasuringDevice deleteMeasuringDevice, DeleteControlDevice deleteControlDevice) {
+
+	public DeleteUser(UserRepository repository, FindUser findUser, DeleteClientMqtt deleteClientMqtt,
+			DeleteMeasuringDevice deleteMeasuringDevice, DeleteControlDevice deleteControlDevice,
+			AuthenticatedUser authenticatedUser) {
 		this.repository = repository;
 		this.findUser = findUser;
 		this.deleteClientMqtt = deleteClientMqtt;
 		this.deleteMeasuringDevice = deleteMeasuringDevice;
 		this.deleteControlDevice = deleteControlDevice;
+		this.authenticatedUser = authenticatedUser;
 	}
 
-
-    
 	public void delete(String id){
         User user = findUser.findById(id);	
+        this.repository.delete(user);
+        deleteClientMqtt.delete(user);
+        deleteMeasuringDevice.deleteAllByUser(user);
+        deleteControlDevice.deleteAllByUser(user);
+    }
+	
+	public void delete(){
+        User user = authenticatedUser.getUser();
         this.repository.delete(user);
         deleteClientMqtt.delete(user);
         deleteMeasuringDevice.deleteAllByUser(user);

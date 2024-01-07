@@ -9,23 +9,23 @@ import org.springframework.stereotype.Service;
 import com.dougfsilva.iotnizer.model.MeasuredValue;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.repository.MeasuringDeviceRepository;
-import com.dougfsilva.iotnizer.service.AuthenticatedUserService;
+import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 
 @Service
 public class AddValueFromMeasuringDevice {
 	
 	private final MeasuringDeviceRepository repository;
 	
-	private final AuthenticatedUserService authenticatedUserService;
+	private final AuthenticatedUser authenticatedUser;
 
-	public AddValueFromMeasuringDevice(MeasuringDeviceRepository repository, AuthenticatedUserService authenticatedUserService) {
+	public AddValueFromMeasuringDevice(MeasuringDeviceRepository repository, AuthenticatedUser authenticatedUser) {
 		this.repository = repository;
-		this.authenticatedUserService = authenticatedUserService;
+		this.authenticatedUser = authenticatedUser;
 	}
 	
 	
 	public void add(String device_id, List<Double> values, LocalDateTime timestamp) {
-		User user = authenticatedUserService.getUser();
+		User user = authenticatedUser.getUser();
 		List<MeasuredValue> measuredValues = new ArrayList<>();
 		if(timestamp == null) {
 			 values.forEach(value -> measuredValues.add(new MeasuredValue(null, LocalDateTime.now(), value)));
