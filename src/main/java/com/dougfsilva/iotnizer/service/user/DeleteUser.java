@@ -28,6 +28,7 @@ public class DeleteUser {
 	}
 
 
+    
 	public void delete(String id){
         User user = findUser.findById(id);	
         this.repository.delete(user);

@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.dougfsilva.iotnizer.dto.UserDto;
 import com.dougfsilva.iotnizer.dto.CreateUserForm;
 import com.dougfsilva.iotnizer.dto.UpdateUserForm;
+import com.dougfsilva.iotnizer.dto.UserDto;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.service.user.CreateUser;
 import com.dougfsilva.iotnizer.service.user.DeleteUser;
@@ -33,7 +33,6 @@ public class UserController {
     private final DeleteUser deleteUser;
     private final UpdateUser updateUser;
     private final FindUser findUser;
-  
 
     public UserController(CreateUser createUser, DeleteUser deleteUser, FindUser findUser, UpdateUser updateUser) {
         this.createUser = createUser;
@@ -58,6 +57,18 @@ public class UserController {
     @PutMapping
     public ResponseEntity<UserDto> updateUser(@RequestParam("id") String id, @RequestBody UpdateUserForm form){
     	User user = updateUser.update(id, form.name(), form.email(), form.profileType());
+    	return ResponseEntity.ok().body(new UserDto(user));
+    }
+    
+    @PutMapping("/block")
+    public ResponseEntity<UserDto> blockUser(@RequestParam("id") String id){
+    	User user = updateUser.block(id);
+    	return ResponseEntity.ok().body(new UserDto(user));
+    }
+    
+    @PutMapping("/unblock")
+    public ResponseEntity<UserDto> ubBlockUser(@RequestParam("id") String id){
+    	User user = updateUser.unBlock(id);
     	return ResponseEntity.ok().body(new UserDto(user));
     }
 

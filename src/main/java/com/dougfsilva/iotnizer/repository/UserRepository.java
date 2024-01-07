@@ -51,9 +51,12 @@ public class UserRepository {
 						profile.getAuthority()))
 				.collect(Collectors.toList());
 		User updatedUser = (getCollection().findOneAndUpdate(Filters.eq(new ObjectId(user.getId())),
-				Updates.combine(Updates.set("email", user.getEmail().getAddress()),
-						Updates.set("name", user.getName()), Updates.set("password", user.getPassword()),
-						Updates.set("profiles", profilesDocuments)),
+				Updates.combine(
+						Updates.set("email", user.getEmail().getAddress()),
+						Updates.set("name", user.getName()), 
+						Updates.set("password", user.getPassword()),
+						Updates.set("profiles", profilesDocuments),
+						Updates.set("blocked", user.getBlocked())),
 				new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)));
 		connection.close();
 		return updatedUser;
