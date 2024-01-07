@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.dougfsilva.iotnizer.exception.ObjectNotFoundException;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.repository.UserRepository;
 
@@ -41,6 +42,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 	private void authentication(String token) {
 		String user_id = tokenService.getUserId(token);
 		Optional<User> user = userRepository.findById(user_id);
+		if(user.isEmpty()) {
+			throw new ObjectNotFoundException(String.format("User with id %s not found in database!", user_id));
+		}
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user.get(), null,
 				user.get().getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(authentication);

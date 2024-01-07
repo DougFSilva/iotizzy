@@ -48,6 +48,11 @@ public class MeasuringDeviceRepository {
 		getCollection().deleteOne(Filters.eq(new ObjectId(device.getId())));
 		connection.close();
 	}
+	
+	public void deleteAllByUser(User user) {
+		getCollection().deleteMany(Filters.eq("user_id", user.getId()));
+		connection.close();
+	}
 
 	public MeasuringDevice update(MeasuringDevice device) {
 		MeasuringDevice updatedDevice = (getCollection().findOneAndUpdate(

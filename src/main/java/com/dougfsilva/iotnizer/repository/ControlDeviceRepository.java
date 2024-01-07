@@ -42,6 +42,11 @@ public class ControlDeviceRepository {
 		getCollection().deleteOne(Filters.eq(new ObjectId(device.getId())));
 		connection.close();
 	}
+	
+	public void deleteAllByUser(User user) {
+		getCollection().deleteMany(Filters.eq("user_id", user.getId()));
+		connection.close();
+	}
 
 	public ControlDevice update(ControlDevice device) {
 		ControlDevice updatedDevice = (getCollection().findOneAndUpdate(Filters.eq(new ObjectId(device.getId())),
