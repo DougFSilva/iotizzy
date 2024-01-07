@@ -89,6 +89,12 @@ public class ControlDeviceRepository {
 		connection.close();
 		return devices;
 	}
+	
+	public Long countDevicesByUser(User user) {
+		long countDocuments = getCollection().countDocuments(Filters.eq("user_id", user.getId()));
+		connection.close();
+		return countDocuments;
+	}
 
 	private MongoCollection<ControlDevice> getCollection() {
         return connection.connect(new ControlDeviceCodec()).getClient().getDatabase(database).getCollection("control_device", ControlDevice.class);

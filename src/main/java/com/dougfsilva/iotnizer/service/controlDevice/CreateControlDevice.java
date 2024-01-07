@@ -7,7 +7,9 @@ import com.dougfsilva.iotnizer.model.ControlDeviceType;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.mqtt.MqttTopicService;
 import com.dougfsilva.iotnizer.repository.ControlDeviceRepository;
+import com.dougfsilva.iotnizer.service.DevicesPerUserChecker;
 import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
+import com.dougfsilva.iotnizer.service.user.UserPermissionsChecker;
 
 @Service
 public class CreateControlDevice {
@@ -17,15 +19,27 @@ public class CreateControlDevice {
 	private final MqttTopicService mqttTopicService;
 	
 	private final AuthenticatedUser authenticatedUser;
+	
+	private final UserPermissionsChecker permissionsChecker;
+	
+	private final DevicesPerUserChecker devicesPerUserChecker;
 
-	public CreateControlDevice(ControlDeviceRepository repository, MqttTopicService mqttTopicService, AuthenticatedUser authenticatedUser) {
+	public CreateControlDevice(ControlDeviceRepository repository, MqttTopicService mqttTopicService,
+			AuthenticatedUser authenticatedUser, UserPermissionsChecker permissionsChecker,
+			DevicesPerUserChecker devicesPerUserChecker) {
+		super();
 		this.repository = repository;
 		this.mqttTopicService = mqttTopicService;
 		this.authenticatedUser = authenticatedUser;
+		this.permissionsChecker = permissionsChecker;
+		this.devicesPerUserChecker = devicesPerUserChecker;
 	}
-	
+
+
 	public ControlDevice create(ControlDeviceType deviceType, String tag, String location) {
 		User user = authenticatedUser.getUser();
+		permissionsChecker.checkBlock(user);
+		devicesPerUserChecker.checkNumberOfControlDevices(user);
 		String formatedTag = tag.toUpperCase().replaceAll(" ", "_").replaceAll("/", "-").replaceAll("#", "H").replaceAll("\\+", "M");
 		String topic = String.format("iotnizer/%s/%s",user.getId(), formatedTag);
 		mqttTopicService.addTopic(user, topic);

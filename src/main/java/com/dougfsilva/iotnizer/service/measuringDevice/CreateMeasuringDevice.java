@@ -9,7 +9,9 @@ import com.dougfsilva.iotnizer.model.MeasuringDevice;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.mqtt.MqttTopicService;
 import com.dougfsilva.iotnizer.repository.MeasuringDeviceRepository;
+import com.dougfsilva.iotnizer.service.DevicesPerUserChecker;
 import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
+import com.dougfsilva.iotnizer.service.user.UserPermissionsChecker;
 
 @Service
 public class CreateMeasuringDevice {
@@ -20,14 +22,24 @@ public class CreateMeasuringDevice {
 	
 	private final AuthenticatedUser authenticatedUser;
 	
-	public CreateMeasuringDevice(MeasuringDeviceRepository repository, MqttTopicService mqttTopicService, AuthenticatedUser authenticatedUser) {
+	private final UserPermissionsChecker permissionsChecker;
+	
+	private final DevicesPerUserChecker devicesPerUserChecker;
+	
+	public CreateMeasuringDevice(MeasuringDeviceRepository repository, MqttTopicService mqttTopicService,
+			AuthenticatedUser authenticatedUser, UserPermissionsChecker permissionsChecker,
+			DevicesPerUserChecker devicesPerUserChecker) {
 		this.repository = repository;
 		this.mqttTopicService = mqttTopicService;
 		this.authenticatedUser = authenticatedUser;
+		this.permissionsChecker = permissionsChecker;
+		this.devicesPerUserChecker = devicesPerUserChecker;
 	}
-	
+
 	public MeasuringDevice create(String tag, String location) {
 		User user = authenticatedUser.getUser();
+		permissionsChecker.checkBlock(user);
+		devicesPerUserChecker.checkNumberOfMeasuringDevices(user);
 		MeasuringDevice device = new MeasuringDevice(null, user.getId(), tag, location, null, new ArrayList<MeasuredValue>());
 		String device_id = repository.create(device);
 		device.setId(device_id);

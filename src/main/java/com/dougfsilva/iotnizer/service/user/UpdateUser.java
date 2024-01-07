@@ -10,6 +10,7 @@ import com.dougfsilva.iotnizer.model.Email;
 import com.dougfsilva.iotnizer.model.Profile;
 import com.dougfsilva.iotnizer.model.ProfileType;
 import com.dougfsilva.iotnizer.model.User;
+import com.dougfsilva.iotnizer.mqtt.EnableClientMqtt;
 import com.dougfsilva.iotnizer.repository.UserRepository;
 
 @Service
@@ -20,12 +21,15 @@ public class UpdateUser {
 	private final FindUser findUser;
 	
 	private final AuthenticatedUser authenticatedUser;
+	
+	private final EnableClientMqtt enableClientMqtt;
 
-
-	public UpdateUser(UserRepository repository, FindUser findUser, AuthenticatedUser authenticatedUser) {
+	public UpdateUser(UserRepository repository, FindUser findUser, AuthenticatedUser authenticatedUser,
+			EnableClientMqtt enableClientMqtt) {
 		this.repository = repository;
 		this.findUser = findUser;
 		this.authenticatedUser = authenticatedUser;
+		this.enableClientMqtt = enableClientMqtt;
 	}
 
 	public User update(String name, String email, ProfileType profileType) {
@@ -51,12 +55,14 @@ public class UpdateUser {
 
 	public User block(String id) {
 		User user = findUser.findById(id);
+		enableClientMqtt.disable(user);
 		user.setBlocked(true);
 		return repository.update(user);
 	}
 
 	public User unBlock(String id) {
 		User user = findUser.findById(id);
+		enableClientMqtt.enable(user);
 		user.setBlocked(false);
 		return repository.update(user);
 	}

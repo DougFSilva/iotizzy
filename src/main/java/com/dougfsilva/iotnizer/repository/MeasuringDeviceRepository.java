@@ -149,7 +149,6 @@ public class MeasuringDeviceRepository {
 		return devices;
 	}
 	
-
 	public List<MeasuringDevice> findAll() {
 		List<MeasuringDevice> devices = new ArrayList<>();
 		MongoCursor<MeasuringDevice> mongoCursor = getCollection().find().batchSize(10000).iterator();
@@ -157,6 +156,13 @@ public class MeasuringDeviceRepository {
 		connection.close();
 		return devices;
 	}
+	
+	public Long countDevicesByUser(User user) {
+		long countDocuments = getCollection().countDocuments(Filters.eq("user_id", user.getId()));
+		connection.close();
+		return countDocuments;
+	}
+
 
 	private MongoCollection<MeasuringDevice> getCollection() {
 		return connection.connect(new MeasuringDeviceCodec(), new MeasuredValueCodec()).getClient()

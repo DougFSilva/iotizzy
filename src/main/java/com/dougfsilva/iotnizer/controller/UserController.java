@@ -55,8 +55,8 @@ public class UserController {
     }
     
     @PutMapping
-    public ResponseEntity<UserDto> updateUser(@RequestParam("id") String id, @RequestBody UpdateUserForm form){
-    	User user = updateUser.update(id, form.name(), form.email(), form.profileType());
+    public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserForm form){
+    	User user = updateUser.update(form.name(), form.email(), form.profileType());
     	return ResponseEntity.ok().body(new UserDto(user));
     }
     

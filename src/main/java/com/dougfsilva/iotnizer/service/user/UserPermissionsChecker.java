@@ -6,9 +6,9 @@ import com.dougfsilva.iotnizer.exception.OperationNotPermittedException;
 import com.dougfsilva.iotnizer.model.User;
 
 @Service
-public class UserCheckPermissions {
+public class UserPermissionsChecker {
 	
-	public UserCheckPermissions checkBlock(User user) {
+	public UserPermissionsChecker checkBlock(User user) {
 		if(user.getBlocked()) {
 			throw new OperationNotPermittedException(String.format("User %s is blocked!", user.getEmail().getAddress()));
 		}

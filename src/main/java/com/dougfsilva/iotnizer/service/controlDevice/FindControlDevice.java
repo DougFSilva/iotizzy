@@ -10,7 +10,7 @@ import com.dougfsilva.iotnizer.model.ControlDevice;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.repository.ControlDeviceRepository;
 import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
-import com.dougfsilva.iotnizer.service.user.UserCheckPermissions;
+import com.dougfsilva.iotnizer.service.user.UserPermissionsChecker;
 
 @Service
 public class FindControlDevice {
@@ -19,11 +19,11 @@ public class FindControlDevice {
 	
 	private final AuthenticatedUser authenticatedUser;
 	
-	private final UserCheckPermissions checkPermissions;
+	private final UserPermissionsChecker checkPermissions;
 
 	
 	public FindControlDevice(ControlDeviceRepository repository, AuthenticatedUser authenticatedUser,
-			UserCheckPermissions checkPermissions) {
+			UserPermissionsChecker checkPermissions) {
 		this.repository = repository;
 		this.authenticatedUser = authenticatedUser;
 		this.checkPermissions = checkPermissions;
