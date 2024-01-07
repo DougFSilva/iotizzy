@@ -81,9 +81,37 @@ public class MeasuringDeviceRepository {
 		connection.close();
 	}
 	
+	public void removeAllValuesByDevice(MeasuringDevice device) {
+		getCollection().updateOne(Filters.eq(new ObjectId(device.getId())), Updates.set("values", new ArrayList<>()));
+		connection.close();
+	}
+	
 	public Optional<MeasuringDevice> findById(String id) {
 		Optional<MeasuringDevice> device = Optional
 				.ofNullable(getCollection().find(Filters.eq(new ObjectId(id)), MeasuringDevice.class).first());
+		connection.close();
+		return device;
+	}
+	
+	public Optional<MeasuringDevice> findByIdAndfilterValuesByTimestamp(String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp){
+		Optional<MeasuringDevice> device = Optional.ofNullable(getCollection().aggregate(java.util.Arrays.asList(Aggregates.match(Filters.eq(new ObjectId(id))), 
+				Document.parse(String.format("{$project: {user_id:1, tag:1, location:1, mqttTopic:1, values:{$filter:{input:'$values',as:'value', cond: {$and :["
+						+ "{$gte:['$$value.timestamp', ISODate('%s')]},"
+						+ "{$lte:['$$value.timestamp', ISODate('%s')]}]}}}}}", 
+						initialTimestamp.toString() + "Z", finalTimestamp.toString() + "Z")))).first());
+		connection.close();
+		return device;
+	}
+	
+	public Optional<MeasuringDevice> findByIdAndFilterValuesByTimestampAndValues(
+			String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp, Double initialValue, Double finalValue){
+		Optional<MeasuringDevice> device = Optional.ofNullable(getCollection().aggregate(java.util.Arrays.asList(Aggregates.match(Filters.eq(new ObjectId(id))), 
+				Document.parse(String.format("{$project: {user_id:1, tag:1, location:1, mqttTopic:1, values:{$filter:{input:'$values',as:'value', cond: {$and :["
+						+ "{$gte:['$$value.timestamp', ISODate('%s')]},"
+						+ "{$lte:['$$value.timestamp', ISODate('%s')]},"
+						+ "{$gte:['$$value.value', %s]},"
+						+ "{$lte:['$$value.value', %s]}]}}}}}", 
+						initialTimestamp.toString() + "Z", finalTimestamp.toString() + "Z", initialValue, finalValue )))).first());
 		connection.close();
 		return device;
 	}
@@ -97,15 +125,6 @@ public class MeasuringDeviceRepository {
 		return devices;
 	}
 	
-	public Optional<MeasuringDevice> findByIdAndfilterValuesByTimestamp(String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp){
-		Optional<MeasuringDevice> device = Optional.ofNullable(getCollection().aggregate(java.util.Arrays.asList(Aggregates.match(Filters.eq(new ObjectId(id))), 
-				Document.parse(String.format("{$project: {user_id:1, tag:1, location:1, mqttTopic:1, values:{$filter:{input:'$values',as:'value', cond: {$and :["
-						+ "{$gte:['$$value.timestamp', ISODate('%s')]},"
-						+ "{$lte:['$$value.timestamp', ISODate('%s')]}]}}}}}", 
-						initialTimestamp.toString() + "Z", finalTimestamp.toString() + "Z")))).first());
-		connection.close();
-		return device;
-	}
 
 	public List<MeasuringDevice> findAll() {
 		List<MeasuringDevice> devices = new ArrayList<>();

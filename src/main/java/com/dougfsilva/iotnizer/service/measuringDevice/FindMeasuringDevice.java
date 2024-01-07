@@ -42,6 +42,16 @@ public class FindMeasuringDevice {
 		return device.get();
 	}
 	
+	public MeasuringDevice findByIdAndfilterValuesByTimestampAndValue(
+			String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp, Double initialValue, Double finalValue){
+		Optional<MeasuringDevice> device = repository.findByIdAndFilterValuesByTimestampAndValues(id, initialTimestamp, finalTimestamp, initialValue, finalValue);
+		if(device.isEmpty()) {
+			throw new ObjectNotFoundException(String.format("Measuring device with id %s not found in database!", id));
+		}
+		authenticatedUserService.deviceVerify(device.get());
+		return device.get();
+	}
+	
 	public List<MeasuringDevice> findAllByUser(){
 		User user = authenticatedUserService.getUser();
 		return repository.findAllByUser(user);

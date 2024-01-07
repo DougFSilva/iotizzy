@@ -28,4 +28,9 @@ public class RemoveValuesFromMeasuringDevice {
 		MeasuringDevice device = findMeasuringDevice.findById(id);
 		repository.removeValueByTimestamp(device, inicialTimetamp, finalTimestamp );
 	}
+	
+	public void removeAll(String id) {
+		MeasuringDevice device = findMeasuringDevice.findById(id);
+		repository.removeAllValuesByDevice(device);
+	}
 }

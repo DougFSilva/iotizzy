@@ -17,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.dougfsilva.iotnizer.dto.AddMeasuredValueForm;
 import com.dougfsilva.iotnizer.dto.CreateMeasuringDeviceForm;
+import com.dougfsilva.iotnizer.dto.FilterMeasuringDeviceForm;
 import com.dougfsilva.iotnizer.dto.UpdateMeasuringDeviceForm;
 import com.dougfsilva.iotnizer.model.MeasuringDevice;
 import com.dougfsilva.iotnizer.service.measuringDevice.AddValueFromMeasuringDevice;
@@ -94,6 +95,12 @@ public class MeasuringDeviceController {
 		return ResponseEntity.ok().build();
 	}
 	
+	@DeleteMapping("/all")
+	public ResponseEntity<Void> removeAllValueFromMeasuringDevice(@RequestParam("id") String id){
+		removeValuesOfMeasuringDevice.removeAll(id);
+		return ResponseEntity.ok().build();
+	}
+	
 	@GetMapping
 	public ResponseEntity<MeasuringDevice> findMeasuringDeviceById(@RequestParam("id") String id){
 		MeasuringDevice device = findMeasuringDevice.findById(id);
@@ -102,8 +109,16 @@ public class MeasuringDeviceController {
 	
 	@GetMapping("/timestamp")
 	public ResponseEntity<MeasuringDevice> findMeasuringDeviceByIdAndFilterValuesByTimestamp(
-			@RequestParam("id") String device_id, @RequestParam("from") LocalDateTime inicialTimestamp, @RequestParam("to") LocalDateTime finalTimestamp){
-		MeasuringDevice device = findMeasuringDevice.findByIdAndfilterValuesByTimestamp(device_id, inicialTimestamp, finalTimestamp);
+			@Valid @RequestBody FilterMeasuringDeviceForm form){
+		MeasuringDevice device = findMeasuringDevice.findByIdAndfilterValuesByTimestamp(form.id(), form.initialTimestamp(), form.finalTimestamp());
+		return ResponseEntity.ok().body(device);
+	}
+	
+	@GetMapping("/timestamp-value")
+	public ResponseEntity<MeasuringDevice> findMeasuringDeviceByIdAndFilterValuesByTimestampAndValue(
+			@Valid @RequestBody FilterMeasuringDeviceForm form){
+		MeasuringDevice device = findMeasuringDevice.findByIdAndfilterValuesByTimestampAndValue(
+				form.id(), form.initialTimestamp(), form.finalTimestamp(), form.initialValue(), form.finalValue());
 		return ResponseEntity.ok().body(device);
 	}
 	
