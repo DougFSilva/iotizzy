@@ -21,18 +21,18 @@ public class FindControlDevice {
 	
 	private final AuthenticatedUser authenticatedUser;
 	
-	private final UserPermissionsChecker checkPermissions;
+	private final UserPermissionsChecker permissionsChecker;
 
-	
 	public FindControlDevice(ControlDeviceRepository repository, AuthenticatedUser authenticatedUser,
-			UserPermissionsChecker checkPermissions) {
+			UserPermissionsChecker permissionsChecker) {
 		this.repository = repository;
 		this.authenticatedUser = authenticatedUser;
-		this.checkPermissions = checkPermissions;
+		this.permissionsChecker = permissionsChecker;
 	}
 
 	public ControlDevice findById(String id) {
 		User user = authenticatedUser.getUser();
+		permissionsChecker.checkBlock(user);
 		Optional<ControlDevice> device = repository.findById(user, id);
 		if(device.isEmpty()) {
 			throw new ObjectNotFoundException(String.format("Control device with id %s not found in database!", id));
@@ -40,16 +40,10 @@ public class FindControlDevice {
 		return device.get();
 	}
 	
-	public List<ControlDevice> findAllByUser(User user){
-		return repository.findAllByUser(user);
-	}
-	
-	public List<ControlDevice> findAllByUser(){
-		User user = authenticatedUser.getUser();
-		return repository.findAllByUser(user);
-	}
-	
 	public List<ControlDevice> findAll(){
-		return repository.findAll();
+		User user = authenticatedUser.getUser();
+		permissionsChecker.checkBlock(user);
+		return repository.findAllByUser(user);
 	}
+	
 }

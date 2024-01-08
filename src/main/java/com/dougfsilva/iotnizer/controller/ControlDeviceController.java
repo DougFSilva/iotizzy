@@ -72,12 +72,6 @@ public class ControlDeviceController {
 	
 	@GetMapping("/user")
 	public ResponseEntity<List<ControlDevice>> findAllDevicesByUser(){
-		List<ControlDevice> devices = findControlDevice.findAllByUser();
-		return ResponseEntity.ok().body(devices);
-	}
-	
-	@GetMapping("/all")
-	public ResponseEntity<List<ControlDevice>> findAllDevices(){
 		List<ControlDevice> devices = findControlDevice.findAll();
 		return ResponseEntity.ok().body(devices);
 	}

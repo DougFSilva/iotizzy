@@ -124,16 +124,9 @@ public class MeasuringDeviceController {
 	
 	@GetMapping("/user")
 	public ResponseEntity<List<MeasuringDevice>> findAllMeasuringDevicesByUser(){
-		List<MeasuringDevice> devices = findMeasuringDevice.findAllByUser();
-		return ResponseEntity.ok().body(devices);
-	}
-	
-	@GetMapping("/all")
-	public ResponseEntity<List<MeasuringDevice>> findAllMeasuringDevices(){
 		List<MeasuringDevice> devices = findMeasuringDevice.findAll();
 		return ResponseEntity.ok().body(devices);
 	}
-	
 	
 	
 }
