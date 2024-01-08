@@ -1,5 +1,6 @@
 package com.dougfsilva.iotnizer.service.measuringDevice;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.dougfsilva.iotnizer.model.MeasuringDevice;
@@ -9,6 +10,7 @@ import com.dougfsilva.iotnizer.repository.MeasuringDeviceRepository;
 import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 
 @Service
+@PreAuthorize("hasAnyRole('GOLD', 'SILVER')")
 public class DeleteMeasuringDevice {
 
 	private final MeasuringDeviceRepository repository;
@@ -34,7 +36,8 @@ public class DeleteMeasuringDevice {
 		repository.delete(user, device);
 	}
 	
-	public void deleteAllByUser(User user) {
+	public void deleteAll() {
+		User user = authenticatedUser.getUser();
 		repository.deleteAllByUser(user);
 	}
 }

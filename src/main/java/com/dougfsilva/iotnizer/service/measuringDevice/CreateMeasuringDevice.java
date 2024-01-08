@@ -2,6 +2,7 @@ package com.dougfsilva.iotnizer.service.measuringDevice;
 
 import java.util.ArrayList;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.dougfsilva.iotnizer.model.MeasuredValue;
@@ -14,6 +15,7 @@ import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 import com.dougfsilva.iotnizer.service.user.UserPermissionsChecker;
 
 @Service
+@PreAuthorize("hasAnyRole('GOLD', 'SILVER')")
 public class CreateMeasuringDevice {
 
 	private final MeasuringDeviceRepository repository;

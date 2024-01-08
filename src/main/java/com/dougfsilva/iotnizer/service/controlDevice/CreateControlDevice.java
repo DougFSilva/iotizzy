@@ -1,5 +1,6 @@
 package com.dougfsilva.iotnizer.service.controlDevice;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.dougfsilva.iotnizer.model.ControlDevice;
@@ -12,6 +13,7 @@ import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 import com.dougfsilva.iotnizer.service.user.UserPermissionsChecker;
 
 @Service
+@PreAuthorize("hasAnyRole('GOLD', 'SILVER')")
 public class CreateControlDevice {
 
 	private final ControlDeviceRepository repository;

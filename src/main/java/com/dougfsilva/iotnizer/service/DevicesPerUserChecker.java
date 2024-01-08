@@ -34,27 +34,31 @@ public class DevicesPerUserChecker {
 		this.measuringDeviceRepository = measuringDeviceRepository;
 	}
 
-	public void checkNumberOfControlDevices(User user) {
+	public DevicesPerUserChecker checkNumberOfControlDevices(User user) {
 		ProfileType profileType = filterMostRelevantProfile(user);
 		Long countedDevices = controlDeviceRepository.countDevicesByUser(user);
 		if ((profileType == ProfileType.GOLD_USER) && (countedDevices < goldUserMaxControlDevices)) {
-			return;
+			return this;
 		} else if ((profileType == ProfileType.SILVER_USER) && (countedDevices < silverUserMaxControlDevices)) {
-			return;
+			return this;
 		} else {
-			throw new OperationNotPermittedException("Limit of control devices per user exceeded!");
+			throw new OperationNotPermittedException(String.format("Limit of control devices per user exceeded! The user has %s control device(s). "
+					+ "Silver users can register up to %s devices and gold users up to %s devices", 
+					countedDevices, silverUserMaxControlDevices, goldUserMaxControlDevices));
 		}
 	}
 	
-	public void checkNumberOfMeasuringDevices(User user) {
+	public DevicesPerUserChecker checkNumberOfMeasuringDevices(User user) {
 		ProfileType profileType = filterMostRelevantProfile(user);
 		Long countedDevices = measuringDeviceRepository.countDevicesByUser(user);
 		if ((profileType == ProfileType.GOLD_USER) && (countedDevices < goldUserMaxMeasuringDevices)) {
-			return;
+			return this;
 		} else if ((profileType == ProfileType.SILVER_USER) && (countedDevices < silverUserMaxMeasuringDevices)) {
-			return;
+			return this;
 		} else {
-			throw new OperationNotPermittedException("Limit of measuring devices per user exceeded!");
+			throw new OperationNotPermittedException(String.format("Limit of measuring devices per user exceeded! The user has %s measuring device(s). "
+					+ "Silver users can register up to %s devices and gold users up to %s devices", 
+					countedDevices, silverUserMaxMeasuringDevices, goldUserMaxMeasuringDevices));
 		}
 	}
 	

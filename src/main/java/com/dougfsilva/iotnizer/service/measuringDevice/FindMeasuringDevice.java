@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.dougfsilva.iotnizer.exception.ObjectNotFoundException;
@@ -13,6 +14,7 @@ import com.dougfsilva.iotnizer.repository.MeasuringDeviceRepository;
 import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 
 @Service
+@PreAuthorize("hasAnyRole('GOLD', 'SILVER')")
 public class FindMeasuringDevice {
 
 	private final MeasuringDeviceRepository repository;

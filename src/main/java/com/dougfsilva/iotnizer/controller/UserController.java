@@ -1,7 +1,6 @@
 package com.dougfsilva.iotnizer.controller;
 
 import java.net.URI;
-import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -49,40 +47,21 @@ public class UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteUser(@RequestParam("id") String id){
-        deleteUser.delete(id);
+    public ResponseEntity<Void> deleteUser(){
+        deleteUser.delete();
         return ResponseEntity.noContent().build();
     }
     
     @PutMapping
     public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserForm form){
-    	User user = updateUser.update(form.name(), form.email(), form.profileType());
+    	User user = updateUser.update(form.name(), form.email());
     	return ResponseEntity.ok().body(new UserDto(user));
     }
     
-    @PutMapping("/block")
-    public ResponseEntity<UserDto> blockUser(@RequestParam("id") String id){
-    	User user = updateUser.block(id);
-    	return ResponseEntity.ok().body(new UserDto(user));
-    }
-    
-    @PutMapping("/unblock")
-    public ResponseEntity<UserDto> ubBlockUser(@RequestParam("id") String id){
-    	User user = updateUser.unBlock(id);
-    	return ResponseEntity.ok().body(new UserDto(user));
-    }
-
     @GetMapping
-    public ResponseEntity<UserDto> findUser(@RequestParam("id") String id){
-        User user = findUser.findById(id);
+    public ResponseEntity<UserDto> findUser(){
+        User user = findUser.findUser();
         return ResponseEntity.ok().body(new UserDto(user));
-    }
-    
-    @GetMapping("/all")
-    public ResponseEntity<List<UserDto>> findAllUsers(){
-    	List<User> users = findUser.findAll();
-    	List<UserDto> usersDto = users.stream().map(UserDto::new).toList();
-    	return ResponseEntity.ok().body(usersDto);
     }
     
     
