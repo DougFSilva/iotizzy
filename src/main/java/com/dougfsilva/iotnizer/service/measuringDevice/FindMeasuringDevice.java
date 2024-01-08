@@ -14,7 +14,7 @@ import com.dougfsilva.iotnizer.repository.MeasuringDeviceRepository;
 import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 
 @Service
-@PreAuthorize("hasAnyRole('GOLD', 'SILVER')")
+@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER')")
 public class FindMeasuringDevice {
 
 	private final MeasuringDeviceRepository repository;

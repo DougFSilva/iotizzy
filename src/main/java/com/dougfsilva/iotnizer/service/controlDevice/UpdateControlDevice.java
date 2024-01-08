@@ -11,7 +11,7 @@ import com.dougfsilva.iotnizer.repository.ControlDeviceRepository;
 import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 
 @Service
-@PreAuthorize("hasAnyRole('GOLD', 'SILVER')")
+@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER')")
 public class UpdateControlDevice {
 	
 	private final ControlDeviceRepository repository;

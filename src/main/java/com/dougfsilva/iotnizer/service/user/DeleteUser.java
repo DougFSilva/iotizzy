@@ -10,7 +10,7 @@ import com.dougfsilva.iotnizer.service.controlDevice.DeleteControlDevice;
 import com.dougfsilva.iotnizer.service.measuringDevice.DeleteMeasuringDevice;
 
 @Service
-@PreAuthorize("hasAnyRole('GOLD', 'SILVER')")
+@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER')")
 public class DeleteUser {
 	
     private final UserRepository repository;

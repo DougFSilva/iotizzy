@@ -13,7 +13,7 @@ import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 import com.dougfsilva.iotnizer.service.user.UserPermissionsChecker;
 
 @Service
-@PreAuthorize("hasAnyRole('GOLD', 'SILVER')")
+@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER')")
 public class CreateControlDevice {
 
 	private final ControlDeviceRepository repository;
