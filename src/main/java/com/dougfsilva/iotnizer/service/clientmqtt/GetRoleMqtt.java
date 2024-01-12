@@ -4,18 +4,18 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.dougfsilva.iotnizer.model.User;
-import com.dougfsilva.iotnizer.mqtt.commands.GetClientMqttCommand;
+import com.dougfsilva.iotnizer.mqtt.commands.GetRoleMqttCommand;
 import com.dougfsilva.iotnizer.service.admin.FindUserAsAdmin;
 
 @Service
 @PreAuthorize("hasRole('ADMIN')")
-public class GetClientMqtt {
+public class GetRoleMqtt {
 
-	private final GetClientMqttCommand mqttCommand;
+	private final GetRoleMqttCommand mqttCommand;
 
 	private final FindUserAsAdmin findUser;
 
-	public GetClientMqtt(GetClientMqttCommand mqttCommand, FindUserAsAdmin findUser) {
+	public GetRoleMqtt(GetRoleMqttCommand mqttCommand, FindUserAsAdmin findUser) {
 		this.mqttCommand = mqttCommand;
 		this.findUser = findUser;
 	}
@@ -24,5 +24,4 @@ public class GetClientMqtt {
 		User user = findUser.findById(user_id);
 		return mqttCommand.get(user);
 	}
-
 }

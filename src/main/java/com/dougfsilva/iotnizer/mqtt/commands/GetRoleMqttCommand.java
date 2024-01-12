@@ -10,20 +10,20 @@ import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.mqtt.MqttParams;
 
 @Service
-public class GetClientMqttCommand {
-	
+public class GetRoleMqttCommand {
+
 	private final MqttParams mqtt;
 	
-	public GetClientMqttCommand(MqttParams mqtt) {
+	public GetRoleMqttCommand(MqttParams mqtt) {
 		this.mqtt = mqtt;
 	}
 
 	public String get(User user) {
-		String username = mqtt.getDefaultClientUsername(user);
+		String username = mqtt.getDefaultRolename(user.getId());
 		String message = "";
 		try {
 			String line;
-			Process getClient = Runtime.getRuntime().exec(mqtt.getDynSecUriCommand() + String.format("getClient %s", username));
+			Process getClient = Runtime.getRuntime().exec(mqtt.getDynSecUriCommand() + String.format("getRole %s", username));
 			BufferedReader input = new BufferedReader(new InputStreamReader(getClient.getInputStream()));
 			  while ((line = input.readLine()) != null) {
 			    message += line;
