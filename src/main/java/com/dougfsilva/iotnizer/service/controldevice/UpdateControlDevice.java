@@ -1,4 +1,4 @@
-package com.dougfsilva.iotnizer.service.controlDevice;
+package com.dougfsilva.iotnizer.service.controldevice;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import com.dougfsilva.iotnizer.repository.ControlDeviceRepository;
 import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 
 @Service
-@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER')")
+@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER', 'ADMIN')")
 public class UpdateControlDevice {
 	
 	private final ControlDeviceRepository repository;

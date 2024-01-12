@@ -25,6 +25,16 @@ public enum ProfileType {
             }
 
         }
-        throw new IllegalArgumentException("Invalid profile!");
+        throw new IllegalArgumentException("Invalid description profile!");
+    }
+    
+    public static ProfileType toEnum(long code) {
+        for (ProfileType x : ProfileType.values()) {
+            if (code == x.getCod()) {
+                return x;
+            }
+
+        }
+        throw new IllegalArgumentException("Invalid cod profile!");
     }
 }

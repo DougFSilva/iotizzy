@@ -9,7 +9,7 @@ import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.repository.UserRepository;
 
 @Service
-@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER')")
+@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER', 'ADMIN')")
 public class UpdateUser {
 
 	private final UserRepository repository;

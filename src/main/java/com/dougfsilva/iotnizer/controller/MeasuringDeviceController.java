@@ -110,7 +110,7 @@ public class MeasuringDeviceController {
 	@GetMapping("/timestamp")
 	public ResponseEntity<MeasuringDevice> findMeasuringDeviceByIdAndFilterValuesByTimestamp(
 			@Valid @RequestBody FilterMeasuringDeviceForm form){
-		MeasuringDevice device = findMeasuringDevice.findByIdAndfilterValuesByTimestamp(form.id(), form.initialTimestamp(), form.finalTimestamp());
+		MeasuringDevice device = findMeasuringDevice.findByIdAndfilterValuesByTimestamp(form.id(), form.initialTimestamp(), form.finalTimestamp(), form.limit());
 		return ResponseEntity.ok().body(device);
 	}
 	
@@ -118,7 +118,7 @@ public class MeasuringDeviceController {
 	public ResponseEntity<MeasuringDevice> findMeasuringDeviceByIdAndFilterValuesByTimestampAndValue(
 			@Valid @RequestBody FilterMeasuringDeviceForm form){
 		MeasuringDevice device = findMeasuringDevice.findByIdAndfilterValuesByTimestampAndValue(
-				form.id(), form.initialTimestamp(), form.finalTimestamp(), form.initialValue(), form.finalValue());
+				form.id(), form.initialTimestamp(), form.finalTimestamp(), form.initialValue(), form.finalValue(), form.limit());
 		return ResponseEntity.ok().body(device);
 	}
 	

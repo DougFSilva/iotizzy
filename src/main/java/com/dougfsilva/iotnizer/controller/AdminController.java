@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dougfsilva.iotnizer.dto.DetailedUserDto;
 import com.dougfsilva.iotnizer.dto.UserDto;
-import com.dougfsilva.iotnizer.model.ProfileType;
 import com.dougfsilva.iotnizer.model.User;
 import com.dougfsilva.iotnizer.service.admin.BlockUser;
 import com.dougfsilva.iotnizer.service.admin.DeleteUserAsAdmin;
@@ -44,9 +44,9 @@ public class AdminController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@PutMapping("/user")
-	public ResponseEntity<UserDto> updateUserProfile(@RequestParam("id") String id, @RequestParam("profile") ProfileType profileType){
-		User user = updateProfile.updateProfile(id, profileType);
+	@PutMapping("/user/update-profile")
+	public ResponseEntity<UserDto> updateUserProfile(@RequestParam("id") String id, @RequestParam("cod") Long profileCod){
+		User user = updateProfile.updateProfile(id, profileCod);
 		return ResponseEntity.ok().body(new UserDto(user));
 	}
 
@@ -54,6 +54,12 @@ public class AdminController {
 	public ResponseEntity<UserDto> blockUser(@RequestParam("id") String id, @RequestParam("status") Boolean status) {
 		User user = blockUser.block(id, status);
 		return ResponseEntity.ok().body(new UserDto(user));
+	}
+	
+	@GetMapping("/user")
+	public ResponseEntity<DetailedUserDto> findUserById(@RequestParam("id") String id) {
+		DetailedUserDto user = findUser.findByIdDetailed(id);
+		return ResponseEntity.ok().body(user);
 	}
 
 	@GetMapping("/user/all")

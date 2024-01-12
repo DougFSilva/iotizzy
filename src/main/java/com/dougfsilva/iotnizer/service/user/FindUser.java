@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import com.dougfsilva.iotnizer.model.User;
 
 @Service
-@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER')")
+@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER', 'ADMIN')")
 public class FindUser {
 	
     private final AuthenticatedUser authenticatedUser;

@@ -4,7 +4,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.dougfsilva.iotnizer.model.User;
-import com.dougfsilva.iotnizer.mqtt.EnableClientMqtt;
+import com.dougfsilva.iotnizer.mqtt.commands.EnableClientMqttCommand;
 import com.dougfsilva.iotnizer.repository.UserRepository;
 
 @Service
@@ -13,11 +13,11 @@ public class BlockUser {
 
 	private final FindUserAsAdmin findUser;
 	
-	private final EnableClientMqtt enableClientMqtt;
+	private final EnableClientMqttCommand enableClientMqtt;
 	
 	private final UserRepository repository;
 	
-	public BlockUser(FindUserAsAdmin findUser, EnableClientMqtt enableClientMqtt, UserRepository repository) {
+	public BlockUser(FindUserAsAdmin findUser, EnableClientMqttCommand enableClientMqtt, UserRepository repository) {
 		this.findUser = findUser;
 		this.enableClientMqtt = enableClientMqtt;
 		this.repository = repository;

@@ -15,7 +15,7 @@ import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 import com.dougfsilva.iotnizer.service.user.UserPermissionsChecker;
 
 @Service
-@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER')")
+@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER', 'ADMIN')")
 public class CreateMeasuringDevice {
 
 	private final MeasuringDeviceRepository repository;

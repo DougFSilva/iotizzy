@@ -1,17 +1,18 @@
-package com.dougfsilva.iotnizer.mqtt;
+package com.dougfsilva.iotnizer.mqtt.commands;
 
 import java.io.IOException;
 
 import org.springframework.stereotype.Service;
 
 import com.dougfsilva.iotnizer.model.User;
+import com.dougfsilva.iotnizer.mqtt.MqttParams;
 
 @Service
-public class DeleteClientMqtt {
+public class DeleteClientMqttCommand {
 
 	private final MqttParams mqtt;
 
-	public DeleteClientMqtt(MqttParams mqtt) {
+	public DeleteClientMqttCommand(MqttParams mqtt) {
 		this.mqtt = mqtt;
 	}
 

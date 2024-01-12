@@ -39,7 +39,6 @@ public class SecurityConfiguration {
 		.authorizeHttpRequests(authorizeRequests -> authorizeRequests
 				.requestMatchers(HttpMethod.POST,"/auth").permitAll()
 				.requestMatchers(HttpMethod.POST, "/user").permitAll()
-				.requestMatchers(HttpMethod.POST, "/measuring-device/add-value").permitAll()
 				.anyRequest().authenticated())
 		.cors(cors -> cors.disable())
 		.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

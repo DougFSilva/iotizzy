@@ -13,7 +13,7 @@ import com.dougfsilva.iotnizer.repository.MeasuringDeviceRepository;
 import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 
 @Service
-@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER')")
+@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER', 'ADMIN')")
 public class AddValueFromMeasuringDevice {
 	
 	private final MeasuringDeviceRepository repository;

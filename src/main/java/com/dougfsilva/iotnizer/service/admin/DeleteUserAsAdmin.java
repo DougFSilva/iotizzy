@@ -4,7 +4,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.dougfsilva.iotnizer.model.User;
-import com.dougfsilva.iotnizer.mqtt.DeleteClientMqtt;
+import com.dougfsilva.iotnizer.mqtt.commands.DeleteClientMqttCommand;
 import com.dougfsilva.iotnizer.repository.ControlDeviceRepository;
 import com.dougfsilva.iotnizer.repository.MeasuringDeviceRepository;
 import com.dougfsilva.iotnizer.repository.UserRepository;
@@ -21,11 +21,11 @@ public class DeleteUserAsAdmin {
 
 	private final FindUserAsAdmin findUser;
 
-	private final DeleteClientMqtt deleteClientMqtt;
+	private final DeleteClientMqttCommand deleteClientMqtt;
 
 	public DeleteUserAsAdmin(UserRepository repository, ControlDeviceRepository controlDeviceRepository,
 			MeasuringDeviceRepository measuringDeviceRepository, FindUserAsAdmin findUser,
-			DeleteClientMqtt deleteClientMqtt) {
+			DeleteClientMqttCommand deleteClientMqtt) {
 		this.repository = repository;
 		this.controlDeviceRepository = controlDeviceRepository;
 		this.measuringDeviceRepository = measuringDeviceRepository;

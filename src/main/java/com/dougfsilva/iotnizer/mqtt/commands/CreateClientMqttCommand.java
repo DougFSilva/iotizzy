@@ -1,4 +1,4 @@
-package com.dougfsilva.iotnizer.mqtt;
+package com.dougfsilva.iotnizer.mqtt.commands;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -7,13 +7,14 @@ import java.io.OutputStreamWriter;
 import org.springframework.stereotype.Service;
 
 import com.dougfsilva.iotnizer.model.User;
+import com.dougfsilva.iotnizer.mqtt.MqttParams;
 
 @Service
-public class CreateClientMqtt {
+public class CreateClientMqttCommand {
 
 	private final MqttParams mqtt;
 	
-	public CreateClientMqtt(MqttParams mqtt) {
+	public CreateClientMqttCommand(MqttParams mqtt) {
 		this.mqtt = mqtt;
 	}
 

@@ -18,10 +18,10 @@ import com.dougfsilva.iotnizer.config.security.AuthenticationService;
 import com.dougfsilva.iotnizer.dto.CreateControlDeviceForm;
 import com.dougfsilva.iotnizer.dto.UpdateControlDeviceForm;
 import com.dougfsilva.iotnizer.model.ControlDevice;
-import com.dougfsilva.iotnizer.service.controlDevice.CreateControlDevice;
-import com.dougfsilva.iotnizer.service.controlDevice.DeleteControlDevice;
-import com.dougfsilva.iotnizer.service.controlDevice.FindControlDevice;
-import com.dougfsilva.iotnizer.service.controlDevice.UpdateControlDevice;
+import com.dougfsilva.iotnizer.service.controldevice.CreateControlDevice;
+import com.dougfsilva.iotnizer.service.controldevice.DeleteControlDevice;
+import com.dougfsilva.iotnizer.service.controldevice.FindControlDevice;
+import com.dougfsilva.iotnizer.service.controldevice.UpdateControlDevice;
 
 import jakarta.validation.Valid;
 

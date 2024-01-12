@@ -11,7 +11,7 @@ import com.dougfsilva.iotnizer.model.Email;
 import com.dougfsilva.iotnizer.model.Profile;
 import com.dougfsilva.iotnizer.model.ProfileType;
 import com.dougfsilva.iotnizer.model.User;
-import com.dougfsilva.iotnizer.mqtt.CreateClientMqtt;
+import com.dougfsilva.iotnizer.mqtt.commands.CreateClientMqttCommand;
 import com.dougfsilva.iotnizer.repository.UserRepository;
 
 @Service
@@ -19,11 +19,11 @@ public class CreateUser {
 
     private final UserRepository repository;
     
-    private final CreateClientMqtt createClientMqtt;
+    private final CreateClientMqttCommand createClientMqtt;
     
     private final PasswordEncoder passwordEncoder;
 
-    public CreateUser(UserRepository repository, CreateClientMqtt createClientMqtt, PasswordEncoder passwordEncoder) {
+    public CreateUser(UserRepository repository, CreateClientMqttCommand createClientMqtt, PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.createClientMqtt = createClientMqtt;
         this.passwordEncoder = passwordEncoder;

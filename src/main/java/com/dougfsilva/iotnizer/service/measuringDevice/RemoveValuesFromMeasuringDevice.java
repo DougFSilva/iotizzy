@@ -11,7 +11,7 @@ import com.dougfsilva.iotnizer.repository.MeasuringDeviceRepository;
 import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 
 @Service
-@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER')")
+@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER', 'ADMIN')")
 public class RemoveValuesFromMeasuringDevice {
 
 	private final MeasuringDeviceRepository repository;
@@ -19,7 +19,6 @@ public class RemoveValuesFromMeasuringDevice {
 	private final FindMeasuringDevice findMeasuringDevice;
 	
 	private final AuthenticatedUser authenticatedUser;
-	
 	
 	public RemoveValuesFromMeasuringDevice(MeasuringDeviceRepository repository,
 			FindMeasuringDevice findMeasuringDevice, AuthenticatedUser authenticatedUser) {

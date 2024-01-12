@@ -15,7 +15,7 @@ import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 import com.dougfsilva.iotnizer.service.user.UserPermissionsChecker;
 
 @Service
-@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER')")
+@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER', 'ADMIN')")
 public class FindMeasuringDevice {
 
 	private final MeasuringDeviceRepository repository;
@@ -42,10 +42,10 @@ public class FindMeasuringDevice {
 		return device.get();
 	}
 	
-	public MeasuringDevice findByIdAndfilterValuesByTimestamp(String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp){
+	public MeasuringDevice findByIdAndfilterValuesByTimestamp(String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp, Integer limit){
 		User user = authenticatedUser.getUser();
 		permissionsChecker.checkBlock(user);
-		Optional<MeasuringDevice> device = repository.findByIdAndfilterValuesByTimestamp(user, id, initialTimestamp, finalTimestamp);
+		Optional<MeasuringDevice> device = repository.findByIdAndfilterValuesByTimestamp(user, id, initialTimestamp, finalTimestamp, limit);
 		if(device.isEmpty()) {
 			throw new ObjectNotFoundException(String.format("Measuring device with id %s not found in database!", id));
 		}
@@ -53,10 +53,10 @@ public class FindMeasuringDevice {
 	}
 	
 	public MeasuringDevice findByIdAndfilterValuesByTimestampAndValue(
-			String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp, Double initialValue, Double finalValue){
+			String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp, Double initialValue, Double finalValue, Integer limit){
 		User user = authenticatedUser.getUser();
 		permissionsChecker.checkBlock(user);
-		Optional<MeasuringDevice> device = repository.findByIdAndFilterValuesByTimestampAndValues(user, id, initialTimestamp, finalTimestamp, initialValue, finalValue);
+		Optional<MeasuringDevice> device = repository.findByIdAndFilterValuesByTimestampAndValues(user, id, initialTimestamp, finalTimestamp, initialValue, finalValue, limit);
 		if(device.isEmpty()) {
 			throw new ObjectNotFoundException(String.format("Measuring device with id %s not found in database!", id));
 		}

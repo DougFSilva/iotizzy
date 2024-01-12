@@ -1,17 +1,18 @@
-package com.dougfsilva.iotnizer.mqtt;
+package com.dougfsilva.iotnizer.mqtt.commands;
 
 import java.io.IOException;
 
 import org.springframework.stereotype.Service;
 
 import com.dougfsilva.iotnizer.model.User;
+import com.dougfsilva.iotnizer.mqtt.MqttParams;
 
 @Service
-public class EnableClientMqtt {
+public class EnableClientMqttCommand {
 
 	private final MqttParams mqtt;
 	
-	public EnableClientMqtt(MqttParams mqtt) {
+	public EnableClientMqttCommand(MqttParams mqtt) {
 		this.mqtt = mqtt;
 	}
 

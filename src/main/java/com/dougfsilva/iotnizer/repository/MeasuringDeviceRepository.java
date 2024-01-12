@@ -72,7 +72,7 @@ public class MeasuringDeviceRepository {
 		getCollection().updateOne(Filters.and(
 				Filters.eq(new ObjectId(device_id)), 
 				Filters.eq("user_id",user.getId())), 
-				Updates.pushEach("values", value, new PushOptions().slice(-12000)));
+				Updates.pushEach("values", value, new PushOptions().position(0).slice(12000)));
 		connection.close();
 	}
 	
@@ -111,35 +111,35 @@ public class MeasuringDeviceRepository {
 		return device;
 	}
 	
-	public Optional<MeasuringDevice> findByIdAndfilterValuesByTimestamp(User user, String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp){
+	public Optional<MeasuringDevice> findByIdAndfilterValuesByTimestamp(User user, String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp, Integer limit){
 		Optional<MeasuringDevice> device = Optional.ofNullable(getCollection().aggregate(java.util.Arrays.asList(
 				Aggregates.match(Filters.and(
 						Filters.eq(new ObjectId(id)), 
 						Filters.eq("user_id", user.getId()))), 
 				Document.parse(String.format("{$project: {user_id:1, tag:1, location:1, mqttTopic:1, values:{$filter:{input:'$values',as:'value', cond: {$and :["
 						+ "{$gte:['$$value.timestamp', ISODate('%s')]},"
-						+ "{$lte:['$$value.timestamp', ISODate('%s')]}]}}}}}", 
-						initialTimestamp.toString() + "Z", finalTimestamp.toString() + "Z")))).first());
+						+ "{$lte:['$$value.timestamp', ISODate('%s')]}]}, limit: %s}}}}", 
+						initialTimestamp.toString() + "Z", finalTimestamp.toString() + "Z", limit)))).first());
 		connection.close();
 		return device;
 	}
 	
 	public Optional<MeasuringDevice> findByIdAndFilterValuesByTimestampAndValues(
-			User user, String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp, Double initialValue, Double finalValue){
+			User user, String id, LocalDateTime initialTimestamp, LocalDateTime finalTimestamp, Double initialValue, Double finalValue, Integer limit){
 		Optional<MeasuringDevice> device = Optional.ofNullable(getCollection().aggregate(java.util.Arrays.asList(
 				Aggregates.match(Filters.and(
 						Filters.eq(new ObjectId(id)), 
-						Filters.eq("user_id".concat(user.getId())))), 
+						Filters.eq("user_id", user.getId()))), 
 				Document.parse(String.format("{$project: {user_id:1, tag:1, location:1, mqttTopic:1, values:{$filter:{input:'$values',as:'value', cond: {$and :["
 						+ "{$gte:['$$value.timestamp', ISODate('%s')]},"
 						+ "{$lte:['$$value.timestamp', ISODate('%s')]},"
 						+ "{$gte:['$$value.value', %s]},"
-						+ "{$lte:['$$value.value', %s]}]}}}}}", 
-						initialTimestamp.toString() + "Z", finalTimestamp.toString() + "Z", initialValue, finalValue )))).first());
+						+ "{$lte:['$$value.value', %s]}]}, limit: %s}}}}", 
+						initialTimestamp.toString() + "Z", finalTimestamp.toString() + "Z", initialValue, finalValue, limit )))).first());
 		connection.close();
 		return device;
 	}
-
+	
 	public List<MeasuringDevice> findAllByUser(User user) {
 		List<MeasuringDevice> devices = new ArrayList<>();
 		MongoCursor<MeasuringDevice> mongoCursor = getCollection().find(Filters.eq("user_id", user.getId()))

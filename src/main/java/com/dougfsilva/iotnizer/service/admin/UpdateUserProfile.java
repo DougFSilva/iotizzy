@@ -30,7 +30,8 @@ public class UpdateUserProfile {
 		this.devicesPerUserChecker = devicesPerUserChecker;
 	}
 
-	public User updateProfile(String id, ProfileType profileType) {
+	public User updateProfile(String id, Long profileCod) {
+		ProfileType profileType = ProfileType.toEnum(profileCod);
 		User user = findUser.findById(id);
 		List<Profile> profiles = new ArrayList<>();
 		profiles.add(new Profile(profileType));

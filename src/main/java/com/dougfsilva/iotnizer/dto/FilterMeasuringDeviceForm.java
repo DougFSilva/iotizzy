@@ -14,7 +14,9 @@ public record FilterMeasuringDeviceForm(
 		
 		Double initialValue,
 		
-		Double finalValue
+		Double finalValue,
+		
+		Integer limit
 		) {
 
 }

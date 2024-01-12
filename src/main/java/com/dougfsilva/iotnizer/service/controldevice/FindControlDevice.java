@@ -1,4 +1,4 @@
-package com.dougfsilva.iotnizer.service.controlDevice;
+package com.dougfsilva.iotnizer.service.controldevice;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +14,7 @@ import com.dougfsilva.iotnizer.service.user.AuthenticatedUser;
 import com.dougfsilva.iotnizer.service.user.UserPermissionsChecker;
 
 @Service
-@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER')")
+@PreAuthorize("hasAnyRole('GOLD_USER', 'SILVER_USER', 'ADMIN')")
 public class FindControlDevice {
 
 	private final ControlDeviceRepository repository;
