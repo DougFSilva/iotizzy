@@ -1,0 +1,31 @@
+package com.dougfsilva.iotnizer.mqtt;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.springframework.stereotype.Service;
+
+import com.dougfsilva.iotnizer.dto.AddMeasuredValueForm;
+import com.dougfsilva.iotnizer.exception.MqttFailException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+
+@Service
+public class MqttMessageConverter {
+
+	public AddMeasuredValueForm toAddMeasuredValueForm(MqttMessage message) {
+		try {
+			Gson gson = new GsonBuilder()
+					.registerTypeAdapter(LocalDateTime.class,
+							(JsonDeserializer<LocalDateTime>) (json, type, jsonDeserializationContext) -> LocalDateTime
+									.parse(json.getAsString(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+					.create();
+			return gson.fromJson(message.toString(), AddMeasuredValueForm.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new MqttFailException("Error converting MqttMessage to AddMeasuredValueForm");
+		}
+	}
+}

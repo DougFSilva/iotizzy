@@ -10,14 +10,19 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.springframework.stereotype.Service;
 
 import com.dougfsilva.iotnizer.exception.MqttFailException;
+import com.dougfsilva.iotnizer.service.measuringDevice.AddValueFromMeasuringDeviceByMqttMessage;
 
 @Service
 public class MqttSystemClientSubscriber implements MqttCallback {
 	
 	private final MqttParams mqtt;
 	
-	public MqttSystemClientSubscriber(MqttParams mqtt) {
+	private final AddValueFromMeasuringDeviceByMqttMessage addValueFromMeasuringDevice;
+	
+	public MqttSystemClientSubscriber(MqttParams mqtt,
+			AddValueFromMeasuringDeviceByMqttMessage addValueFromMeasuringDevice) {
 		this.mqtt = mqtt;
+		this.addValueFromMeasuringDevice = addValueFromMeasuringDevice;
 	}
 
 	public void connect() {
@@ -44,24 +49,20 @@ public class MqttSystemClientSubscriber implements MqttCallback {
 			throw new MqttFailException("Connection failure!, cause: " + e.getMessage());
 		}
 	}
-	
 
 	@Override
 	public void connectionLost(Throwable cause) {
 		System.out.println(cause);
-		
 	}
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		System.out.println(String.format("topic: %s", topic));
-		System.out.println(String.format("message: %s", message));
+		addValueFromMeasuringDevice.add(topic, message);
 	}
 
 	@Override
 	public void deliveryComplete(IMqttDeliveryToken token) {
 		System.out.println(token);
-		
 	}
 
 }

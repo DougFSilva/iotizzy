@@ -76,6 +76,14 @@ public class MeasuringDeviceRepository {
 		connection.close();
 	}
 	
+	public void addValues(String user_id, String device_id, List<MeasuredValue> value) {
+		getCollection().updateOne(Filters.and(
+				Filters.eq(new ObjectId(device_id)), 
+				Filters.eq("user_id",user_id)), 
+				Updates.pushEach("values", value, new PushOptions().position(0).slice(12000)));
+		connection.close();
+	}
+	
 	public void removeValue(User user, MeasuringDevice device, String value_id) {
 		getCollection().updateMany(Filters.and(
 				Filters.eq(new ObjectId(device.getId())), 
