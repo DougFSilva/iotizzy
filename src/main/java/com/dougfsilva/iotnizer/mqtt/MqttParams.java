@@ -18,15 +18,27 @@ public class MqttParams {
 	@Value("${mqtt.port}")
 	private Integer port;
 	
-	@Value("${mqtt.username}")
-	private String username;
+	@Value("${mqtt.client.dynsec.username}")
+	private String dynsecClientUsername;
 	
-	@Value("${mqtt.password}")
-	private String password;
+	@Value("${mqtt.client.dynsec.password}")
+	private String dynsecClientPassword;
+	
+	@Value("${mqtt.client.systemsubscriber.username}")
+	private String systemSubscriberUsername;
+	
+	@Value("${mqtt.client.systemsubscriber.password}")
+	private String systemSubscriberPassword;
+	
+	@Value("${mqtt.client.systemsubscriber.id}")
+	private String systemSubscriberId;
+	
+	private final String systemsubscriberTopic = "iotnizer/persist/#";
+	
 	
 	public String getDynSecUriCommand() {
 		String uri = String.format("mosquitto_ctrl -h %s -p %s -u %s -P %s dynsec ", this.host,
-				this.port, this.username, this.password);
+				this.port, this.dynsecClientUsername, this.dynsecClientPassword);
 		return uri;
 	}
 	
