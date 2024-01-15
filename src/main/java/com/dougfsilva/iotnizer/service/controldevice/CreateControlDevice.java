@@ -29,7 +29,6 @@ public class CreateControlDevice {
 	public CreateControlDevice(ControlDeviceRepository repository, MqttTopicService mqttTopicService,
 			AuthenticatedUser authenticatedUser, UserPermissionsChecker permissionsChecker,
 			DevicesPerUserChecker devicesPerUserChecker) {
-		super();
 		this.repository = repository;
 		this.mqttTopicService = mqttTopicService;
 		this.authenticatedUser = authenticatedUser;

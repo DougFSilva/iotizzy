@@ -42,6 +42,10 @@ public class FindUserAsAdmin {
 		return new DetailedUserDto(user, controlDevicesCount, measringDeviceCount);
 	}
 	
+	public List<User> findAllByBlocked(Boolean blocked){
+		return repository.findAllByBlocked(blocked);
+	}
+	
 	public List<User> findAll(){
 		return repository.findAll();
 	}

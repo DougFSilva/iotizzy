@@ -83,6 +83,14 @@ public class UserRepository {
 		connection.close();
 		return users;
 	}
+    
+    public List<User> findAllByBlocked(Boolean blocked) {
+  		List<User> users = new ArrayList<>();
+  		MongoCursor<User> mongoCursor = getCollection().find(Filters.eq("blocked", blocked)).batchSize(10000).iterator();
+  		mongoCursor.forEachRemaining(cursor -> users.add(cursor));
+  		connection.close();
+  		return users;
+  	}
 
 	private MongoCollection<User> getCollection() {
         return connection.connect(new UserCodec()).getClient().getDatabase(database).getCollection("user", User.class);

@@ -61,6 +61,13 @@ public class AdminController {
 		DetailedUserDto user = findUser.findByIdDetailed(id);
 		return ResponseEntity.ok().body(user);
 	}
+	
+	@GetMapping("/user/blocked")
+	public ResponseEntity<List<UserDto>> findAllUsersByBlocked(@RequestParam("status") Boolean status) {
+		List<User> users = findUser.findAllByBlocked(status);
+		List<UserDto> usersDto = users.stream().map(UserDto::new).toList();
+		return ResponseEntity.ok().body(usersDto);
+	}
 
 	@GetMapping("/user/all")
 	public ResponseEntity<List<UserDto>> findAllUsers() {

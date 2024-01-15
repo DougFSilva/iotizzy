@@ -24,8 +24,7 @@ public class MqttMessageConverter {
 					.create();
 			return gson.fromJson(message.toString(), AddMeasuredValueForm.class);
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new MqttFailException("Error converting MqttMessage to AddMeasuredValueForm");
+			throw new MqttFailException( String.format("Error converting MqttMessage to AddMeasuredValueForm \n %s ", e.getMessage()));
 		}
 	}
 }
