@@ -1,5 +1,6 @@
 package com.dougfsilva.iotizzy.config.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,11 +14,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfiguration {
+public class SecurityConfiguration implements WebMvcConfigurer {
+	
+	@Value("${frontend.origin}")
+	private String frontendOrigin;
 
 	private final AuthenticationFilter authenticationFilter;
 
@@ -40,7 +46,6 @@ public class SecurityConfiguration {
 				.requestMatchers(HttpMethod.POST,"/auth").permitAll()
 				.requestMatchers(HttpMethod.POST, "/user").permitAll()
 				.anyRequest().authenticated())
-		.cors(cors -> cors.disable())
 		.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
@@ -50,5 +55,12 @@ public class SecurityConfiguration {
     PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**").allowedOrigins(frontendOrigin).allowedMethods("*");
+	}
+    
+    
 
 }
