@@ -41,7 +41,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserForm form){
-        User user = createUser.create(form.email(), form.name(), form.password(), form.profileType());
+        User user = createUser.create(form.email(), form.name(), form.password());
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }

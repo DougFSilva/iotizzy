@@ -34,6 +34,19 @@ public class CreateUser {
 		this.enableClientMqtt = enableClientMqtt;
 	}
 
+	public User create(String email, String name, String password){
+        if(repository.findByEmail(new Email(email)).isPresent()){
+            throw new InvalidEmailException("Email already registered in the database!");
+        }
+        String passwordEncoded = passwordEncoder.encode(password);
+        User user = new User(null, new Email(email), name, passwordEncoded, List.of(new Profile(ProfileType.SILVER_USER)), UUID.randomUUID().toString(), true);
+        String createdUser_id = repository.create(user);
+        user.setId(createdUser_id);
+        createClientMqtt.create(user);
+        enableClientMqtt.disable(user);;
+        return user;
+    }
+	
 	public User create(String email, String name, String password, ProfileType profileType){
         if(repository.findByEmail(new Email(email)).isPresent()){
             throw new InvalidEmailException("Email already registered in the database!");
