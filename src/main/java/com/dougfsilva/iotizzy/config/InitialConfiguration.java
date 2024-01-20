@@ -19,11 +19,11 @@ import com.dougfsilva.iotizzy.service.user.CreateUser;
 @Configuration
 public class InitialConfiguration implements ApplicationRunner{
 	
-	@Value("${user.admin.email}")
-	private String adminEmail;
+	@Value("${user.master.email}")
+	private String masterEmail;
 	
-	@Value("${user.admin.password}")
-	private String adminPassoword;
+	@Value("${user.master.password}")
+	private String masterPassword;
 	
 	private final CreateUser createUser;
 	
@@ -50,8 +50,8 @@ public class InitialConfiguration implements ApplicationRunner{
 	}
 	
 	private void createAdmin() {
-		if(userRepository.findByEmail(new Email(adminEmail)).isEmpty()){
-			createUser.create(adminEmail, "admin", adminEmail, ProfileType.ADMIN);
+		if(userRepository.findByEmail(new Email(masterEmail)).isEmpty()){
+			createUser.create(masterEmail, "Master User", masterPassword, ProfileType.ADMIN, false);
 		}
 	}
 	
