@@ -1,10 +1,12 @@
 package com.dougfsilva.iotizzy.config.mongo;
 
-import com.mongodb.MongoClientSettings;
-import lombok.Getter;
 import org.bson.Document;
 import org.bson.codecs.Codec;
 import org.springframework.stereotype.Service;
+
+import com.mongodb.MongoClientSettings;
+
+import lombok.Getter;
 
 @Getter
 @Service
